@@ -1,0 +1,1181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MatchFlix - Film Öneri Platformu{% endblock %}</title>
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Styles - Cinematic Dark Theme -->
+    <style>
+        /* ========================================
+           MATCHFLIX - CINEMATIC DARK THEME
+           Pure black, solid colors, no gradients
+        ======================================== */
+        
+        :root {
+            /* Core Colors - Solid Only */
+            --color-bg-pure: #000000;
+            --color-bg-surface: #0F0F0F;
+            --color-bg-elevated: #1A1A1A;
+            --color-border: #27272A;
+            
+            /* Accent Colors - Flat, Bold */
+            --color-primary: #DC2626;
+            --color-accent-gold: #FBBF24;
+            --color-accent-blue: #3B82F6;
+            --color-success: #22C55E;
+            --color-error: #EF4444;
+            --color-warning: #F59E0B;
+            
+            /* Text Colors */
+            --color-text-white: #FFFFFF;
+            --color-text-light: #D1D5DB;
+            --color-text-muted: #6B7280;
+            --color-text-dark: #4B5563;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--color-bg-pure);
+            color: var(--color-text-white);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.95);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+            transition: opacity 0.2s ease;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+        }
+
+        /* Nav Links */
+        .nav-links {
+            display: none;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+        }
+
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            letter-spacing: 0.01em;
+        }
+
+        .nav-link:hover {
+            color: var(--color-text-white);
+        }
+
+        /* Nav Right */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Notification Icon */
+        .notification-btn {
+            position: relative;
+            color: var(--color-text-muted);
+            transition: color 0.2s ease;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .notification-btn:hover {
+            color: var(--color-text-white);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--color-primary);
+            color: var(--color-text-white);
+            font-size: 0.625rem;
+            font-weight: 700;
+            width: 1.125rem;
+            height: 1.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* User Profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .user-profile:hover {
+            color: var(--color-text-white);
+        }
+
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--color-primary);
+            color: var(--color-text-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Auth Links */
+        .auth-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .auth-link:hover {
+            color: var(--color-text-white);
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-text-white);
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-text-light);
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-primary);
+            color: var(--color-text-white);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--color-text-muted);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid var(--color-border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background-color: var(--color-bg-surface);
+            border: 1px solid var(--color-border);
+        }
+
+        /* ===== MOVIE CARDS ===== */
+        .movie-card {
+            position: relative;
+            background-color: var(--color-bg-surface);
+            border: 1px solid transparent;
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-primary);
+        }
+
+        .movie-poster {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            display: block;
+            background-color: var(--color-bg-elevated);
+        }
+
+        /* ===== SECTION TITLES ===== */
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .section-title-large {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--color-text-white);
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== TEXT UTILITIES ===== */
+        .text-primary {
+            color: var(--color-primary);
+        }
+
+        .text-gold {
+            color: var(--color-accent-gold);
+        }
+
+        .text-blue {
+            color: var(--color-accent-blue);
+        }
+
+        .text-muted {
+            color: var(--color-text-muted);
+        }
+
+        /* ===== INPUTS ===== */
+        .input-field {
+            width: 100%;
+            background-color: var(--color-bg-pure);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-white);
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-field::placeholder {
+            color: var(--color-text-dark);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        /* ===== TOAST NOTIFICATIONS ===== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 300px;
+            max-width: 400px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+            border: 1px solid;
+        }
+
+        .toast-success {
+            background-color: #064E3B;
+            border-color: var(--color-success);
+        }
+
+        .toast-error {
+            background-color: #7F1D1D;
+            border-color: var(--color-error);
+        }
+
+        .toast-info {
+            background-color: #1E3A8A;
+            border-color: var(--color-accent-blue);
+        }
+
+        .toast-warning {
+            background-color: #78350F;
+            border-color: var(--color-warning);
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-white);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0;
+            transition: color 0.2s;
+        }
+
+        .toast-close:hover {
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+
+        .toast.hiding {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--color-border);
+            margin-top: 5rem;
+            padding: 3rem 0;
+            background-color: var(--color-bg-pure);
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .footer-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-text-white);
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        .footer-link {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-link:hover {
+            color: var(--color-text-white);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--color-border);
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .tmdb-attribution {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--color-border);
+        }
+
+        @media (min-width: 640px) {
+            .tmdb-attribution {
+                flex-direction: row;
+            }
+        }
+
+        .tmdb-logo {
+            height: 1.5rem;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .tmdb-logo:hover {
+            opacity: 1;
+        }
+
+        .tmdb-text {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            max-width: 24rem;
+            text-align: center;
+        }
+
+        /* ===== SETTINGS TOGGLE ===== */
+        .settings-toggle-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .settings-toggle-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--color-border);
+            background-color: var(--color-bg-surface);
+            color: var(--color-text-muted);
+        }
+
+        .settings-toggle-btn:hover {
+            border-color: var(--color-accent-blue);
+            color: var(--color-text-white);
+        }
+
+        .settings-toggle-btn.active {
+            background-color: var(--color-accent-blue);
+            border-color: var(--color-accent-blue);
+            color: white;
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .max-w-7xl {
+            max-width: 80rem;
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .py-12 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .min-h-screen {
+            min-height: 100vh;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: flex;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--color-text-white);
+        }
+    </style>
+
+    <script>
+        function protectedNavLink(event) {
+            {% if not user.is_authenticated %}
+            event.preventDefault();
+            showToast('Lütfen önce giriş yapınız!', 'warning');
+            setTimeout(function() {
+                window.location.href = '{% url "login" %}?next=' + window.location.pathname;
+            }, 1500);
+            {% endif %}
+        }
+
+        // Toast Notification System
+        function showToast(message, type, duration) {
+            type = type || 'info';
+            duration = duration || 4000;
+            
+            var container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            var icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML = '<span class="toast-icon">' + (icons[type] || icons.info) + '</span><span class="toast-message">' + message + '</span><button class="toast-close" onclick="closeToast(this)">&times;</button>';
+
+            container.appendChild(toast);
+
+            setTimeout(function() {
+                if (toast.parentNode) {
+                    toast.classList.add('hiding');
+                    setTimeout(function() { toast.remove(); }, 300);
+                }
+            }, duration);
+
+            return toast;
+        }
+
+        function closeToast(button) {
+            var toast = button.parentElement;
+            toast.classList.add('hiding');
+            setTimeout(function() { toast.remove(); }, 300);
+        }
+
+        // ===== LANGUAGE SYSTEM =====
+        var translations = {
+            tr: {
+                home: 'Ana Sayfa',
+                explore: 'Keşfet',
+                quickMatch: 'Hızlı Eşleşme',
+                friends: 'Arkadaşlar',
+                myList: 'Listem',
+                logout: 'Çıkış',
+                login: 'Giriş',
+                register: 'Kaydol',
+                editProfile: 'Profili Düzenle',
+                settings: 'Ayarlar',
+                watchedMovies: 'İzlenen Filmler',
+                averageRating: 'Ortalama Puan',
+                recentRatings: 'Son Puanladığı Filmler',
+                noRatings: 'Henüz film puanlamadın.',
+                theme: 'Tema',
+                darkTheme: 'Koyu',
+                lightTheme: 'Açık',
+                language: 'Dil',
+                turkish: 'Türkçe',
+                english: 'English',
+                searchPlaceholder: 'Film ara... (yazmaya başla)',
+                search: 'Ara',
+                results: 'sonuç',
+                clearSearch: '✕ Aramayı Temizle',
+                filters: 'Filtreler',
+                clear: 'Temizle',
+                genre: 'Tür',
+                all: 'Tümü',
+                minRating: 'Min. Puan',
+                year: 'Yıl',
+                sorting: 'Sıralama',
+                popularity: 'Popülerlik',
+                highestRating: 'En Yüksek Puan',
+                newest: 'En Yeni',
+                hello: 'Merhaba',
+                personalRecommendations: 'Sana özel öneriler burada.',
+                yourAverage: 'Ortalama Puanın',
+                myFriends: 'Arkadaşlarım',
+                forYou: 'Sana Özel Öneriler',
+                trending: 'Şu Sıralar Popüler',
+                upcoming: 'Yakında Vizyona Girecek',
+                loading: 'Yükleniyor...',
+                addToList: '+ Listeme Ekle',
+                inMyList: '✓ Listemde',
+                removeFromList: 'Listeden Çıkar',
+                rate: 'Puan Ver',
+                updateRating: 'Puanını Güncelle',
+                rating: 'Puan',
+                releaseDate: 'Çıkış',
+                runtime: 'Süre',
+                minutes: 'dk',
+                about: 'Hakkında',
+                directors: 'Yönetmen ve Yazarlar',
+                userRatings: 'Kullanıcı Puanlamaları',
+                noRatingsYet: 'Henüz puan yok.',
+                similar: 'Benzer Filmler',
+                cast: 'Oyuncular',
+                reviews: 'Yorumlar',
+                rateMovie: 'Filmi Puanla',
+                selectRating: 'Puanı Seç (1-10)',
+                yourReview: 'İncelemen (İsteğe Bağlı)',
+                reviewPlaceholder: 'Bu film hakkında ne düşünüyorsun?',
+                addComment: 'Yorum ekle (isteğe bağlı)',
+                submit: 'Gönder',
+                cancel: 'İptal',
+                myWatchlist: 'İzleme Listem',
+                moviesInList: 'film listenizde',
+                emptyWatchlist: 'Listeniz Boş',
+                addMoviesHint: 'İzlemek istediğiniz filmleri buraya ekleyin',
+                addedOn: 'Eklenme tarihi',
+                removeFromWatchlist: 'Listeden Çıkar',
+                myFriendsPage: 'Arkadaşlarım',
+                addFriend: 'Arkadaş Ekle',
+                searchFriend: 'Arkadaş Ara',
+                searchFriendPlaceholder: 'Kullanıcı adı veya isim ara...',
+                pendingRequests: 'Bekleyen İstekler',
+                sentRequests: 'Gönderilen İstekler',
+                waiting: 'Bekliyor',
+                accept: 'Kabul Et',
+                reject: 'Reddet',
+                remove: 'Çıkar',
+                sendRequest: 'İstek Gönder',
+                requestSent: '✓ İstek Gönderildi',
+                noFriends: 'Henüz arkadaşın yok',
+                addFriendHint: 'Arkadaş ekleyerek Hızlı Eşleşme oyununu oyna',
+                quickMatchTitle: 'Hızlı Eşleşme',
+                compatibility: 'Uyumluluk',
+                whoWatchWith: 'Kiminle izleyeceksin?',
+                selectOrInvite: 'Arkadaşını seç veya bir kişiye davet gönder.',
+                selectFriend: 'Arkadaş Seç',
+                selectFromList: 'Listenden birini seç',
+                sendInvite: 'Davet Gönder',
+                inviteByEmail: 'E-mail ile birini davet et',
+                noFriendsYet: 'Henüz arkadaş yok.',
+                continue: 'Devam Et →',
+                back: '← Geri',
+                pickAMovie: 'Birer film seç',
+                pickMovieDesc: 'Her biriniz bir film seçin. Ardından uyumlu filmleri bulalım.',
+                seeResults: 'Sonuçları Gör →',
+                compatibleMovies: 'Uyumlu Filmler',
+                moviesYouBothLike: 'İkiniz de hoşlanacak filmler:',
+                startOver: 'Yeniden Başla',
+                start: 'Başla ▶️',
+                profilePicture: 'Profil Fotoğrafı',
+                firstName: 'Ad',
+                firstNamePlaceholder: 'Adınız',
+                lastName: 'Soyad',
+                lastNamePlaceholder: 'Soyadınız',
+                email: 'E-posta',
+                birthDate: 'Doğum Tarihi',
+                aboutMe: 'Hakkımda',
+                aboutMePlaceholder: 'Kendinizi tanıtın...',
+                loginDesc: 'MatchFlix hesabına giriş yap',
+                registerDesc: 'MatchFlix\'e katıl ve filmler keşfet',
+                username: 'Kullanıcı Adı',
+                password: 'Şifre',
+                confirmPassword: 'Şifreyi Onayla',
+                noAccount: 'Hesabın yok mu?',
+                haveAccount: 'Zaten hesabın var mı?',
+                save: 'Kaydet',
+                close: 'Kapat',
+                noResults: 'Sonuç bulunamadı',
+                footerSlogan: 'Film seçimini kolaylaştır. Uyumlu filmler bul.',
+                footerProduct: 'Ürün',
+                footerLegal: 'Hukuki',
+                footerTerms: 'Şartlar',
+                footerPrivacy: 'Gizlilik',
+                footerCookies: 'Çerezler',
+                footerContact: 'İletişim',
+                footerRights: '© 2025 MatchFlix. Tüm hakları saklıdır.',
+                landingHero1: 'Durun, Kavga Etmeyin',
+                landingHero2: 'Ortak İzleyeceğiniz Filmi Buldum!',
+                landingDesc: 'MatchFlix, iki kişinin farklı zevkleri olsa bile birlikte izleyecekleri mükemmel filmi bulur.',
+                landingStart: 'Şimdi Başla',
+                landingHow: 'Nasıl Çalışır?',
+                landingFeat1Title: 'Beğeni Analizi',
+                landingFeat1Desc: 'Puanladığın filmlerden yola çıkarak zevkini analiz eder.',
+                landingFeat2Title: 'Uyumluluk Skoru',
+                landingFeat2Desc: 'Arkadaşınla ne kadar uyumlu olduğunu gösterir ve benzer zevk aldığınız türleri keşfetmeni sağlar.',
+                landingFeat3Title: 'Hızlı Karar',
+                landingFeat3Desc: 'Tartışmaya son vermenizi sağlar. Saniyeler içinde ikinizin de hoşlanacağı filmi bulur.',
+                landingReady: 'Hazır mısın?',
+                landingReadyDesc: 'Perde açılıyor. Koltuğunu kap ve serüvene başla.',
+                landingRegister: 'Şimdi Kaydol'
+            },
+            en: {
+                home: 'Home',
+                explore: 'Explore',
+                quickMatch: 'Quick Match',
+                friends: 'Friends',
+                myList: 'My List',
+                logout: 'Logout',
+                login: 'Login',
+                register: 'Register',
+                editProfile: 'Edit Profile',
+                settings: 'Settings',
+                watchedMovies: 'Watched Movies',
+                averageRating: 'Average Rating',
+                recentRatings: 'Recent Ratings',
+                noRatings: 'You haven\'t rated any movies yet.',
+                theme: 'Theme',
+                darkTheme: 'Dark',
+                lightTheme: 'Light',
+                language: 'Language',
+                turkish: 'Türkçe',
+                english: 'English',
+                searchPlaceholder: 'Search movies... (start typing)',
+                search: 'Search',
+                results: 'results',
+                clearSearch: '✕ Clear Search',
+                filters: 'Filters',
+                clear: 'Clear',
+                genre: 'Genre',
+                all: 'All',
+                minRating: 'Min. Rating',
+                year: 'Year',
+                sorting: 'Sort By',
+                popularity: 'Popularity',
+                highestRating: 'Highest Rated',
+                newest: 'Newest',
+                hello: 'Hello',
+                personalRecommendations: 'Here are your personalized recommendations.',
+                yourAverage: 'Your Average',
+                myFriends: 'My Friends',
+                forYou: 'For You',
+                trending: 'Trending Now',
+                upcoming: 'Coming Soon',
+                loading: 'Loading...',
+                addToList: '+ Add to List',
+                inMyList: '✓ In My List',
+                removeFromList: 'Remove from List',
+                rate: 'Rate',
+                updateRating: 'Update Rating',
+                rating: 'Rating',
+                releaseDate: 'Release',
+                runtime: 'Runtime',
+                minutes: 'min',
+                about: 'About',
+                directors: 'Directors & Writers',
+                userRatings: 'User Ratings',
+                noRatingsYet: 'No ratings yet.',
+                similar: 'Similar Movies',
+                cast: 'Cast',
+                reviews: 'Reviews',
+                rateMovie: 'Rate This Movie',
+                selectRating: 'Select Rating (1-10)',
+                yourReview: 'Your Review (Optional)',
+                reviewPlaceholder: 'What do you think about this movie?',
+                addComment: 'Add a comment (optional)',
+                submit: 'Submit',
+                cancel: 'Cancel',
+                myWatchlist: 'My Watchlist',
+                moviesInList: 'movies in your list',
+                emptyWatchlist: 'Your Watchlist is Empty',
+                addMoviesHint: 'Add movies you want to watch here',
+                addedOn: 'Added on',
+                removeFromWatchlist: 'Remove from List',
+                myFriendsPage: 'My Friends',
+                addFriend: 'Add Friend',
+                searchFriend: 'Search Friend',
+                searchFriendPlaceholder: 'Search by username or name...',
+                pendingRequests: 'Pending Requests',
+                sentRequests: 'Sent Requests',
+                waiting: 'Waiting',
+                accept: 'Accept',
+                reject: 'Reject',
+                remove: 'Remove',
+                sendRequest: 'Send Request',
+                requestSent: '✓ Request Sent',
+                noFriends: 'You don\'t have any friends yet',
+                addFriendHint: 'Add friends to play Quick Match',
+                quickMatchTitle: 'Quick Match',
+                compatibility: 'Compatibility',
+                whoWatchWith: 'Who are you watching with?',
+                selectOrInvite: 'Select a friend or send an invite.',
+                selectFriend: 'Select Friend',
+                selectFromList: 'Choose from your list',
+                sendInvite: 'Send Invite',
+                inviteByEmail: 'Invite someone via email',
+                noFriendsYet: 'No friends yet.',
+                continue: 'Continue →',
+                back: '← Back',
+                pickAMovie: 'Pick a movie each',
+                pickMovieDesc: 'Each of you pick a movie. Then we\'ll find compatible movies.',
+                seeResults: 'See Results →',
+                compatibleMovies: 'Compatible Movies',
+                moviesYouBothLike: 'Movies you\'ll both enjoy:',
+                startOver: 'Start Over',
+                start: 'Start ▶️',
+                profilePicture: 'Profile Picture',
+                firstName: 'First Name',
+                firstNamePlaceholder: 'Your first name',
+                lastName: 'Last Name',
+                lastNamePlaceholder: 'Your last name',
+                email: 'Email',
+                birthDate: 'Birth Date',
+                aboutMe: 'About Me',
+                aboutMePlaceholder: 'Tell us about yourself...',
+                loginDesc: 'Sign in to your MatchFlix account',
+                registerDesc: 'Join MatchFlix and discover movies',
+                username: 'Username',
+                password: 'Password',
+                confirmPassword: 'Confirm Password',
+                noAccount: 'Don\'t have an account?',
+                haveAccount: 'Already have an account?',
+                save: 'Save',
+                close: 'Close',
+                noResults: 'No results found',
+                footerSlogan: 'Make movie choice easy. Find compatible movies.',
+                footerProduct: 'Product',
+                footerLegal: 'Legal',
+                footerTerms: 'Terms',
+                footerPrivacy: 'Privacy',
+                footerCookies: 'Cookies',
+                footerContact: 'Contact',
+                footerRights: '© 2025 MatchFlix. All rights reserved.',
+                landingHero1: 'Stop Fighting',
+                landingHero2: 'I Found Your Perfect Match.',
+                landingDesc: 'MatchFlix finds the perfect movie for two people to watch together, even with different tastes.',
+                landingStart: 'Start Now',
+                landingHow: 'How it Works?',
+                landingFeat1Title: 'Taste Analysis',
+                landingFeat1Desc: 'Analyzes your taste based on the movies you’ve rated.',
+                landingFeat2Title: 'Compatibility Score',
+                landingFeat2Desc: 'Shows how compatible you are with your friend and helps you discover genres you both enjoy.',
+                landingFeat3Title: 'Quick Decision',
+                landingFeat3Desc: 'End the debate. Find a movie you both enjoy in seconds.',
+                landingReady: 'Are you ready?',
+                landingReadyDesc: 'The curtain rises. Grab your seat and start the adventure.',
+                landingRegister: 'Sign Up Now'
+            }
+        };
+
+        function getLang() {
+            return localStorage.getItem('lang') || 'tr';
+        }
+
+        function setLang(lang) {
+            localStorage.setItem('lang', lang);
+            applyTranslations();
+            updateSettingsUI();
+        }
+
+        function t(key) {
+            var lang = getLang();
+            return translations[lang][key] || translations['tr'][key] || key;
+        }
+
+        function applyTranslations() {
+            var lang = getLang();
+            var elements = document.querySelectorAll('[data-i18n]');
+
+            elements.forEach(function(el) {
+                var key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+                var key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+        }
+
+        function updateSettingsUI() {
+            var langTr = document.getElementById('langTrBtn');
+            var langEn = document.getElementById('langEnBtn');
+            var currentLang = getLang();
+
+            if (langTr && langEn) {
+                langTr.classList.toggle('active', currentLang === 'tr');
+                langEn.classList.toggle('active', currentLang === 'en');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            applyTranslations();
+            updateSettingsUI();
+            fetchNotificationCount();
+        });
+
+        async function fetchNotificationCount() {
+            try {
+                var response = await fetch('/notifications/api/unread-count/');
+                if (response.ok) {
+                    var data = await response.json();
+                    var badge = document.getElementById('navNotificationBadge');
+                    if (badge && data.unread_count > 0) {
+                        badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
+                        badge.classList.remove('hidden');
+                    } else if (badge) {
+                        badge.classList.add('hidden');
+                    }
+                }
+            } catch (error) {
+                // User not logged in, ignore
+            }
+        }
+
+        setInterval(fetchNotificationCount, 60000);
+    </script>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- Logo -->
+             {% if not user.is_authenticated %}
+                <a href="{% url 'landing' %}" class="logo">MatchFlix</a>
+            {% else %}
+                <a href="{% url 'home' %}" class="logo">MatchFlix</a>
+            {% endif %}
+
+            <!-- Center Navigation -->
+            <div class="nav-links">
+                <a href="{% url 'home' %}" onclick="protectedNavLink(event)" class="nav-link" data-i18n="home">Ana Sayfa</a>
+                <a href="{% url 'explore' %}" onclick="protectedNavLink(event)" class="nav-link" data-i18n="explore">Keşfet</a>
+                <a href="{% url 'quick_match' %}" onclick="protectedNavLink(event)" class="nav-link" data-i18n="quickMatch">Hızlı Eşleşme</a>
+                <a href="{% url 'friends' %}" onclick="protectedNavLink(event)" class="nav-link" data-i18n="friends">Arkadaşlar</a>
+                <a href="{% url 'watchlist' %}" onclick="protectedNavLink(event)" class="nav-link" data-i18n="myList">Listem</a>
+                <a href="{% url 'watched_movies' %}" onclick="protectedNavLink(event)" class="nav-link" data-i18n="watchedMovies">İzlenen Filmler</a>
+            </div>
+
+            <!-- Right Side -->
+            <div class="nav-right">
+                {% if user.is_authenticated %}
+                <!-- Notification Icon -->
+                <a href="{% url 'notifications:notifications_page' %}" class="notification-btn" title="Bildirimler">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span id="navNotificationBadge" class="hidden notification-badge">0</span>
+                </a>
+
+                <!-- User Profile -->
+                <a href="{% url 'profile' %}" class="user-profile">
+                    <div class="user-avatar">
+                        {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                        {% else %}
+                        {{ user.first_name|first|upper|default:user.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    <span>{{ user.username }}</span>
+                </a>
+
+                <!-- Logout -->
+                <a href="{% url 'logout' %}" class="auth-link" data-i18n="logout">Çıkış</a>
+                {% else %}
+                <!-- Login -->
+                <a href="{% url 'login' %}" class="auth-link" data-i18n="login">Giriş</a>
+                <!-- Register -->
+                <a href="{% url 'register' %}" class="btn-primary" data-i18n="register">Kaydol</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="footer-title">MatchFlix</h3>
+                    <p class="footer-text" data-i18n="footerSlogan">Film seçimini kolaylaştır. Uyumlu filmler bul.</p>
+                </div>
+                <div>
+                    <h3 class="footer-title" data-i18n="footerProduct">Ürün</h3>
+                    <a href="{% url 'explore' %}" class="footer-link" data-i18n="explore">Keşfet</a>
+                    <a href="{% url 'quick_match' %}" class="footer-link" data-i18n="quickMatch">Quick Match</a>
+                    <a href="{% url 'friends' %}" class="footer-link" data-i18n="friends">Arkadaşlar</a>
+                </div>
+                <div>
+                    <h3 class="footer-title" data-i18n="footerLegal">Hukuki</h3>
+                    <a href="#" class="footer-link" data-i18n="footerTerms">Şartlar</a>
+                    <a href="#" class="footer-link" data-i18n="footerPrivacy">Gizlilik</a>
+                    <a href="#" class="footer-link" data-i18n="footerCookies">Çerezler</a>
+                </div>
+                <div>
+                    <h3 class="footer-title" data-i18n="footerContact">İletişim</h3>
+                    <p class="footer-text">contact@matchflix.com</p>
+                </div>
+            </div>
+
+            <!-- TMDB Attribution -->
+            <div class="tmdb-attribution">
+                <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">
+                    <img src="{% static 'images/tmdb_logo.png' %}" alt="TMDB Logo" class="tmdb-logo">
+                </a>
+                <p class="tmdb-text">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright" data-i18n="footerRights">&copy; 2025 MatchFlix. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

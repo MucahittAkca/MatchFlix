@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Environment
+.env
+.env.local
+
+# Large files (bunları S3'e yükleyeceğiz)
+ml-25m/
+ml-25m.zip
+ncf_model.pkl
+ncf_model_mappings.pkl
+ncf_model_ml_mapping.pkl
+
+# Celery
+celery_broker/
+celery_results/
+
+# Documentation
+*.md
+!README.md
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db

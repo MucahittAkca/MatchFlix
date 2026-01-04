@@ -1,0 +1,1126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movie.title }} - MatchFlix{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* ========================================
+       MOVIE DETAIL - CINEMATIC DARK THEME
+       No gradients, solid colors only
+    ======================================== */
+    
+    body {
+        background-color: #000000 !important;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        position: relative;
+        min-height: 90vh;
+        overflow: hidden;
+    }
+    
+    .hero-backdrop {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.4;
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    
+    .hero-overlay-bottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(to top, #000000, transparent);
+    }
+    
+    .hero-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 4rem 0;
+    }
+    
+    .hero-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        gap: 3rem;
+        align-items: flex-end;
+    }
+    
+    /* Poster */
+    .movie-poster-hero {
+        display: none;
+        width: 280px;
+        flex-shrink: 0;
+        border: 2px solid #27272A;
+    }
+    
+    @media (min-width: 768px) {
+        .movie-poster-hero {
+            display: block;
+        }
+    }
+    
+    .movie-poster-hero img {
+        width: 100%;
+        display: block;
+    }
+    
+    /* Movie Info */
+    .movie-info {
+        flex: 1;
+    }
+    
+    .movie-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 3.5rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        line-height: 1.1;
+        margin-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .movie-title {
+            font-size: 2rem;
+        }
+    }
+    
+    .movie-original-title {
+        font-size: 1.125rem;
+        color: #6B7280;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Stats Row */
+    .stats-row {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .stat-item {
+        text-align: left;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #6B7280;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-value {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.75rem;
+        color: #FFFFFF;
+    }
+    
+    .stat-value.gold {
+        color: #FBBF24;
+    }
+    
+    /* Genres */
+    .genres-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+    
+    .genre-tag {
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        color: #D1D5DB;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-action-primary {
+        background-color: #DC2626;
+        color: #FFFFFF;
+    }
+    
+    .btn-action-primary:hover {
+        background-color: #991B1B;
+    }
+    
+    .btn-action-secondary {
+        background-color: #1A1A1A;
+        color: #D1D5DB;
+        border: 1px solid #27272A;
+    }
+    
+    .btn-action-secondary:hover {
+        border-color: #DC2626;
+        color: #FFFFFF;
+    }
+    
+    .btn-action-success {
+        background-color: #22C55E;
+        color: #000000;
+    }
+    
+    .btn-action-success:hover {
+        background-color: #16A34A;
+    }
+    
+    .btn-status {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    
+    .btn-status-liked {
+        background-color: #22C55E;
+        color: #FFFFFF;
+    }
+    
+    .btn-status-disliked {
+        background-color: #EF4444;
+        color: #FFFFFF;
+    }
+    
+    /* Main Content */
+    .main-content {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+    }
+    
+    /* Section */
+    .content-section {
+        margin-bottom: 4rem;
+    }
+    
+    .section-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.5rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background-color: #DC2626;
+    }
+    
+    /* Overview */
+    .overview-text {
+        font-size: 1.125rem;
+        color: #D1D5DB;
+        line-height: 1.8;
+        max-width: 48rem;
+    }
+    
+    .tagline {
+        font-size: 0.875rem;
+        color: #6B7280;
+        font-style: italic;
+        margin-top: 1rem;
+    }
+    
+    /* Watch Providers */
+    .provider-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .provider-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #6B7280;
+        margin-bottom: 0.75rem;
+    }
+    
+    .provider-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .provider-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        padding: 0.5rem 0.75rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .provider-item:hover {
+        border-color: #DC2626;
+    }
+    
+    .provider-item img {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    .provider-item span {
+        font-size: 0.875rem;
+        color: #D1D5DB;
+    }
+    
+    .no-providers {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .no-providers-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .no-providers-text {
+        color: #6B7280;
+        font-size: 0.875rem;
+    }
+    
+    /* Cast Grid */
+    .cast-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .cast-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .cast-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    .cast-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        overflow: hidden;
+        transition: border-color 0.2s ease;
+    }
+    
+    .cast-card:hover {
+        border-color: #DC2626;
+    }
+    
+    .cast-card img {
+        width: 100%;
+        height: 10rem;
+        object-fit: cover;
+        background-color: #1A1A1A;
+    }
+    
+    .cast-card-info {
+        padding: 0.75rem;
+    }
+    
+    .cast-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+    }
+    
+    .cast-character {
+        font-size: 0.75rem;
+        color: #6B7280;
+    }
+    
+    /* Crew Grid */
+    .crew-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .crew-grid {
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+    
+    .crew-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 1rem;
+    }
+    
+    .crew-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+    }
+    
+    .crew-job {
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+    
+    /* Ratings List */
+    .ratings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .rating-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 1.25rem;
+    }
+    
+    .rating-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .rating-user {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #FFFFFF;
+    }
+    
+    .rating-score {
+        font-family: 'Anton', sans-serif;
+        font-size: 1rem;
+        color: #FBBF24;
+    }
+    
+    .rating-review {
+        font-size: 0.875rem;
+        color: #D1D5DB;
+        line-height: 1.6;
+    }
+    
+    .rating-date {
+        font-size: 0.75rem;
+        color: #4B5563;
+        margin-top: 0.5rem;
+    }
+    
+    .no-ratings {
+        color: #6B7280;
+        font-size: 0.875rem;
+    }
+    
+    /* Similar Movies Grid */
+    .similar-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .similar-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .similar-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    /* Cinema Movie Card - Same as Home Page */
+    .cinema-movie-card {
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        overflow: hidden;
+        transition: transform 0.2s ease-out, border-color 0.1s;
+        position: relative;
+        display: block;
+        text-decoration: none;
+    }
+    
+    .cinema-movie-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: #DC2626;
+        z-index: 10;
+    }
+    
+    .cinema-movie-card:hover .cinema-movie-overlay {
+        opacity: 1;
+    }
+    
+    .cinema-movie-poster {
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        background-color: #0F0F0F;
+        display: block;
+    }
+    
+    .cinema-movie-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 1rem;
+        opacity: 0;
+        transition: opacity 0.2s ease-out;
+        border-top: 2px solid #DC2626;
+    }
+    
+    .cinema-movie-title {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .cinema-movie-rating {
+        font-family: 'Anton', sans-serif;
+        font-size: 0.875rem;
+        color: #FBBF24;
+    }
+    
+    /* Modals */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+    
+    .modal-content {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        max-width: 28rem;
+        width: 100%;
+        margin: 1rem;
+        padding: 2rem;
+    }
+    
+    .modal-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.5rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Rating Buttons */
+    .rating-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .rating-btn {
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        color: #FFFFFF;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .rating-btn:hover {
+        border-color: #DC2626;
+    }
+    
+    .rating-btn.active {
+        background-color: #DC2626;
+        border-color: #DC2626;
+    }
+    
+    /* Textarea */
+    .textarea-field {
+        width: 100%;
+        background-color: #000000;
+        border: 1px solid #27272A;
+        color: #FFFFFF;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        resize: vertical;
+        min-height: 6rem;
+    }
+    
+    .textarea-field::placeholder {
+        color: #4B5563;
+    }
+    
+    .textarea-field:focus {
+        outline: none;
+        border-color: #DC2626;
+    }
+    
+    /* Modal Buttons */
+    .modal-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+    
+    .modal-buttons button {
+        flex: 1;
+    }
+    
+    /* Watched Modal */
+    .watched-modal-content {
+        text-align: center;
+    }
+    
+    .watched-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.5rem;
+        color: #FFFFFF;
+        margin-bottom: 0.5rem;
+    }
+    
+    .watched-question {
+        color: #6B7280;
+        margin-bottom: 2rem;
+    }
+    
+    .watched-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .watched-btn {
+        flex: 1;
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .watched-btn-liked {
+        background-color: #22C55E;
+        color: #FFFFFF;
+    }
+    
+    .watched-btn-liked:hover {
+        background-color: #16A34A;
+    }
+    
+    .watched-btn-disliked {
+        background-color: #EF4444;
+        color: #FFFFFF;
+    }
+    
+    .watched-btn-disliked:hover {
+        background-color: #DC2626;
+    }
+    
+    .watched-cancel {
+        margin-top: 1rem;
+        color: #6B7280;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+    
+    .watched-cancel:hover {
+        color: #FFFFFF;
+    }
+    
+    /* JustWatch */
+    .justwatch-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #4B5563;
+        font-size: 0.75rem;
+        text-decoration: none;
+        margin-top: 1rem;
+        transition: color 0.2s ease;
+    }
+    
+    .justwatch-link:hover {
+        color: #FFFFFF;
+    }
+    
+    .justwatch-link img {
+        height: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    {% if movie.backdrop_url %}
+    <img src="{{ movie.backdrop_url }}" alt="{{ movie.title }}" class="hero-backdrop">
+    {% endif %}
+    <div class="hero-overlay"></div>
+    <div class="hero-overlay-bottom"></div>
+    
+    <div class="hero-content">
+        <div class="hero-inner">
+            <!-- Poster -->
+            <div class="movie-poster-hero">
+                <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+            </div>
+            
+            <!-- Movie Info -->
+            <div class="movie-info">
+                <h1 class="movie-title">{{ movie.title }}</h1>
+                {% if movie.original_title and movie.original_title != movie.title %}
+                <p class="movie-original-title">{{ movie.original_title }}</p>
+                {% endif %}
+                
+                <!-- Stats -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <p class="stat-label">⭐ <span data-i18n="rating">Puan</span></p>
+                        <p class="stat-value gold">{{ movie.vote_average|floatformat:1 }}/10</p>
+                    </div>
+                    <div class="stat-item">
+                        <p class="stat-label">📅 <span data-i18n="releaseDate">Çıkış</span></p>
+                        <p class="stat-value">{{ movie.release_date|date:"Y" }}</p>
+                    </div>
+                    {% if movie.runtime %}
+                    <div class="stat-item">
+                        <p class="stat-label">⏱️ <span data-i18n="runtime">Süre</span></p>
+                        <p class="stat-value">{{ movie.runtime }} <span style="font-size: 1rem; color: #6B7280;">dk</span></p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Genres -->
+                <div class="genres-row">
+                    {% for genre in movie.genres.all %}
+                    <span class="genre-tag">{{ genre.name_tr|default:genre.name }}</span>
+                    {% endfor %}
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button onclick="toggleRatingModal()" class="btn-action btn-action-primary">
+                        {% if user_rating %}⭐ Puanını Güncelle{% else %}⭐ Puan Ver{% endif %}
+                    </button>
+                    
+                    {% if watched_movie %}
+                    <span class="btn-action {% if watched_movie.liked %}btn-status-liked{% else %}btn-status-disliked{% endif %}">
+                        {% if watched_movie.liked %}❤️ Beğendim{% else %}👎 Beğenmedim{% endif %}
+                    </span>
+                    <button onclick="showWatchedModal()" class="btn-action btn-action-secondary">Değiştir</button>
+                    {% else %}
+                    <button onclick="showWatchedModal()" class="btn-action btn-action-success">👁️ Bunu İzledim</button>
+                    <button id="watchlistBtn" onclick="toggleWatchlist()" class="btn-action btn-action-secondary">
+                        {% if is_in_watchlist %}✓ İzleyeceklerim{% else %}+ İzleyeceğim{% endif %}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Overview -->
+    <div class="content-section">
+        <h2 class="section-title" data-i18n="about">Hakkında</h2>
+        <p class="overview-text">{{ movie.overview }}</p>
+        {% if movie.tagline %}
+        <p class="tagline">"{{ movie.tagline }}"</p>
+        {% endif %}
+    </div>
+    
+    <!-- Watch Providers -->
+    <div class="content-section">
+        <h2 class="section-title" data-i18n="whereToWatch">Nereden İzlenir?</h2>
+        
+        {% if watch_providers.flatrate or watch_providers.rent or watch_providers.buy %}
+        
+        {% if watch_providers.flatrate %}
+        <div class="provider-group">
+            <p class="provider-label">📺 Abonelikle İzle</p>
+            <div class="provider-list">
+                {% for provider in watch_providers.flatrate %}
+                <div class="provider-item">
+                    <img src="https://image.tmdb.org/t/p/w45{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                    <span>{{ provider.provider_name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if watch_providers.rent %}
+        <div class="provider-group">
+            <p class="provider-label">🎬 Kirala</p>
+            <div class="provider-list">
+                {% for provider in watch_providers.rent %}
+                <div class="provider-item">
+                    <img src="https://image.tmdb.org/t/p/w45{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                    <span>{{ provider.provider_name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if watch_providers.buy %}
+        <div class="provider-group">
+            <p class="provider-label">💳 Satın Al</p>
+            <div class="provider-list">
+                {% for provider in watch_providers.buy %}
+                <div class="provider-item">
+                    <img src="https://image.tmdb.org/t/p/w45{{ provider.logo_path }}" alt="{{ provider.provider_name }}">
+                    <span>{{ provider.provider_name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if watch_providers.link %}
+        <a href="{{ watch_providers.link }}" target="_blank" rel="noopener noreferrer" class="justwatch-link">
+            <span>Powered by</span>
+            <img src="https://www.justwatch.com/appassets/img/logo/JustWatch-logo-small.png" alt="JustWatch">
+        </a>
+        {% endif %}
+        
+        {% else %}
+        <div class="no-providers">
+            <div class="no-providers-icon">🔍</div>
+            <p class="no-providers-text">Bu film için Türkiye'de izleme platformu bilgisi bulunamadı.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Cast -->
+    {% if movie.cast.all %}
+    <div class="content-section">
+        <h2 class="section-title" data-i18n="cast">Oyuncular</h2>
+        <div class="cast-grid">
+            {% for cast_member in movie.cast.all|slice:":6" %}
+            <div class="cast-card">
+                <img src="{{ cast_member.person.profile_url }}" alt="{{ cast_member.person.name }}" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                <div class="cast-card-info">
+                    <p class="cast-name">{{ cast_member.person.name }}</p>
+                    <p class="cast-character">{{ cast_member.character_name }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Crew -->
+    {% if movie.crew.all %}
+    <div class="content-section">
+        <h2 class="section-title" data-i18n="directors">Yönetmen ve Yazarlar</h2>
+        <div class="crew-grid">
+            {% for crew_member in movie.crew.all|slice:":6" %}
+            <div class="crew-card">
+                <p class="crew-name">{{ crew_member.person.name }}</p>
+                <p class="crew-job">{{ crew_member.job }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- User Ratings -->
+    <div class="content-section">
+        <h2 class="section-title" data-i18n="userRatings">Kullanıcı Puanlamaları</h2>
+        <div class="ratings-list">
+            {% for rating in ratings %}
+            <div class="rating-card">
+                <div class="rating-header">
+                    <span class="rating-user">{{ rating.user.username }}</span>
+                    <span class="rating-score">★ {{ rating.score }}/10</span>
+                </div>
+                {% if rating.review %}
+                <p class="rating-review">{{ rating.review }}</p>
+                {% endif %}
+                <p class="rating-date">{{ rating.created_at|date:"d M Y" }}</p>
+            </div>
+            {% empty %}
+            <p class="no-ratings" data-i18n="noRatingsYet">Henüz puan yok.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Similar Movies -->
+    {% if similar_movies %}
+    <div class="content-section">
+        <h2 class="section-title" data-i18n="similar">Benzer Filmler</h2>
+        <div class="similar-grid">
+            {% for movie_item in similar_movies %}
+            <a href="{% url 'movie_detail' movie_item.id %}" class="cinema-movie-card">
+                <img src="{{ movie_item.poster_url }}" alt="{{ movie_item.title }}" class="cinema-movie-poster">
+                <div class="cinema-movie-overlay">
+                    <h3 class="cinema-movie-title">{{ movie_item.title }}</h3>
+                    <div class="cinema-movie-rating">
+                        <span>★</span> {{ movie_item.vote_average|floatformat:1 }} / 10
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Rating Modal -->
+<div id="ratingModal" class="hidden modal-overlay">
+    <div class="modal-content">
+        <h3 class="modal-title" data-i18n="rateMovie">Filmi Puanla</h3>
+        
+        <form onsubmit="submitRating(event)">
+            <div>
+                <label style="font-size: 0.875rem; font-weight: 600; color: #6B7280; display: block; margin-bottom: 0.75rem;" data-i18n="selectRating">Puanı Seç (1-10)</label>
+                <div class="rating-buttons">
+                    {% for i in rating_range %}
+                    <button type="button" class="rating-btn {% if user_rating.score == i %}active{% endif %}" data-value="{{ i }}" onclick="selectRating({{ i }})">{{ i }}</button>
+                    {% endfor %}
+                </div>
+                <input type="hidden" id="selectedRating" name="score" value="{{ user_rating.score|default:'' }}" required>
+            </div>
+            
+            <div>
+                <label style="font-size: 0.875rem; font-weight: 600; color: #6B7280; display: block; margin-bottom: 0.5rem;" data-i18n="yourReview">İncelemen (İsteğe Bağlı)</label>
+                <textarea id="reviewText" name="review" class="textarea-field" placeholder="Bu film hakkında ne düşünüyorsun?" data-i18n-placeholder="reviewPlaceholder">{{ user_rating.review|default:'' }}</textarea>
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="submit" class="btn-action btn-action-primary" data-i18n="submit">Gönder</button>
+                <button type="button" onclick="toggleRatingModal()" class="btn-action btn-action-secondary" data-i18n="cancel">İptal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Watched Modal -->
+<div id="watchedModal" class="hidden modal-overlay">
+    <div class="modal-content watched-modal-content">
+        <h3 class="watched-title">{{ movie.title }}</h3>
+        <p class="watched-question">Bu filmi beğendiniz mi?</p>
+        
+        <div class="watched-buttons">
+            <button onclick="markAsWatched(true)" class="watched-btn watched-btn-liked">❤️ Beğendim</button>
+            <button onclick="markAsWatched(false)" class="watched-btn watched-btn-disliked">👎 Beğenmedim</button>
+        </div>
+        
+        <button onclick="hideWatchedModal()" class="watched-cancel">İptal</button>
+    </div>
+</div>
+
+<script>
+function toggleRatingModal() {
+    document.getElementById('ratingModal').classList.toggle('hidden');
+}
+
+function selectRating(value) {
+    document.getElementById('selectedRating').value = value;
+    document.querySelectorAll('.rating-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+async function submitRating(event) {
+    event.preventDefault();
+    
+    var score = document.getElementById('selectedRating').value;
+    var review = document.getElementById('reviewText').value;
+    var submitBtn = event.target.querySelector('button[type="submit"]');
+    
+    if (!score) {
+        showToast('Lütfen bir puan seçin!', 'warning');
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Kaydediliyor...';
+    
+    try {
+        var response = await fetch('{% url "add_rating" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                movie_id: {{ movie.id }},
+                score: parseInt(score),
+                review: review
+            })
+        });
+        
+        var data = await response.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            toggleRatingModal();
+            setTimeout(function() { window.location.reload(); }, 1500);
+        } else {
+            showToast(data.error, 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Gönder';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Gönder';
+    }
+}
+
+async function toggleWatchlist() {
+    var btn = document.getElementById('watchlistBtn');
+    if (!btn) return;
+    
+    var originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '...';
+    
+    try {
+        var response = await fetch('{% url "toggle_watchlist" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ movie_id: {{ movie.id }} })
+        });
+        
+        var data = await response.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            if (data.action === 'added') {
+                btn.innerHTML = '✓ İzleyeceklerim';
+            } else {
+                btn.innerHTML = '+ İzleyeceğim';
+            }
+            btn.disabled = false;
+        } else {
+            showToast(data.error, 'error');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Bir hata oluştu', 'error');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+function showWatchedModal() {
+    document.getElementById('watchedModal').classList.remove('hidden');
+}
+
+function hideWatchedModal() {
+    document.getElementById('watchedModal').classList.add('hidden');
+}
+
+async function markAsWatched(liked) {
+    hideWatchedModal();
+    
+    try {
+        var response = await fetch('{% url "mark_as_watched" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 
+                movie_id: {{ movie.id }},
+                liked: liked
+            })
+        });
+        
+        var data = await response.json();
+        
+        if (data.success) {
+            var status = liked ? 'beğenildi ❤️' : 'beğenilmedi 👎';
+            showToast('{{ movie.title }} izlendi olarak işaretlendi (' + status + ')', 'success');
+            setTimeout(function() { window.location.reload(); }, 1000);
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Bir hata oluştu', 'error');
+    }
+}
+</script>
+{% endblock %}

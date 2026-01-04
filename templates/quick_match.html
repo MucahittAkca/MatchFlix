@@ -1,0 +1,971 @@
+{% extends 'base.html' %}
+
+{% block title %}Hızlı Eşleşme - MatchFlix{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* ========================================
+       QUICK MATCH - CINEMATIC DARK THEME
+       No gradients, solid colors only
+    ======================================== */
+    
+    .quick-match-container {
+        background-color: #000000;
+        min-height: 100vh;
+    }
+    
+    /* Page Header */
+    .page-subtitle {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #6B7280;
+        margin-bottom: 0.5rem;
+    }
+    
+    .page-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 3rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.5rem;
+    }
+    
+    .page-description {
+        font-size: 1rem;
+        color: #6B7280;
+        max-width: 32rem;
+    }
+    
+    /* Back Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6B7280;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: color 0.2s ease;
+        margin-bottom: 2rem;
+    }
+    
+    .back-link:hover {
+        color: #FFFFFF;
+    }
+    
+    /* Section Headers */
+    .section-step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        background-color: #DC2626;
+        color: #FFFFFF;
+        font-size: 0.875rem;
+        font-weight: 700;
+        margin-right: 0.75rem;
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #FFFFFF;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-optional {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #4B5563;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-left: 0.75rem;
+    }
+    
+    /* Selection Cards */
+    .selection-card {
+        background-color: #0F0F0F;
+        border: 2px solid #27272A;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .selection-card:hover {
+        border-color: #4B5563;
+    }
+    
+    .selection-card.selected {
+        border-color: #DC2626;
+        background-color: #1A1A1A;
+    }
+    
+    .selection-card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .selection-card-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+    }
+    
+    .selection-card-desc {
+        font-size: 0.75rem;
+        color: #6B7280;
+    }
+    
+    /* Small Selection Cards (Mood, Time, Era) */
+    .mini-card {
+        background-color: #0F0F0F;
+        border: 2px solid #27272A;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .mini-card:hover {
+        border-color: #4B5563;
+    }
+    
+    .mini-card.selected {
+        border-color: #DC2626;
+        background-color: #1A1A1A;
+    }
+    
+    .mini-card-icon {
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .mini-card-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #D1D5DB;
+    }
+    
+    /* Friend Cards */
+    .friend-card {
+        background-color: #0F0F0F;
+        border: 2px solid #27272A;
+        padding: 1.25rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .friend-card:hover {
+        border-color: #4B5563;
+    }
+    
+    .friend-card.selected {
+        border-color: #3B82F6;
+        background-color: #1A1A1A;
+    }
+    
+    .friend-avatar {
+        width: 3.5rem;
+        height: 3.5rem;
+        background-color: #3B82F6;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 auto 0.75rem;
+        overflow: hidden;
+    }
+    
+    .friend-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .friend-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    /* Genre Select */
+    .genre-select {
+        width: 100%;
+        background-color: #000000;
+        border: 2px solid #27272A;
+        color: #FFFFFF;
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.25rem;
+    }
+    
+    .genre-select:focus {
+        outline: none;
+        border-color: #DC2626;
+    }
+    
+    .genre-select option {
+        background-color: #0F0F0F;
+        color: #FFFFFF;
+    }
+    
+    /* Submit Button */
+    .submit-btn {
+        background-color: #DC2626;
+        color: #FFFFFF;
+        padding: 1.25rem 3rem;
+        font-family: 'Anton', sans-serif;
+        font-size: 1.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .submit-btn:hover {
+        background-color: #991B1B;
+        transform: translate(2px, 2px);
+    }
+    
+    /* Error Box */
+    .error-box {
+        background-color: #1A1A1A;
+        border-left: 4px solid #EF4444;
+        padding: 1rem 1.25rem;
+        margin-bottom: 2rem;
+        color: #F87171;
+        font-size: 0.875rem;
+    }
+    
+    /* ===== RESULTS PAGE ===== */
+    
+    /* Compatibility Card */
+    .compatibility-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 3rem 2rem;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .compatibility-users {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3rem;
+        margin-bottom: 2rem;
+    }
+    
+    .user-block {
+        text-align: center;
+    }
+    
+    .user-avatar-large {
+        width: 5rem;
+        height: 5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #FFFFFF;
+        margin: 0 auto 0.75rem;
+        overflow: hidden;
+    }
+    
+    .user-avatar-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .user-avatar-large.user-1 {
+        background-color: #DC2626;
+    }
+    
+    .user-avatar-large.user-2 {
+        background-color: #3B82F6;
+    }
+    
+    .user-name-large {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #FFFFFF;
+    }
+    
+    .compatibility-score {
+        text-align: center;
+    }
+    
+    .score-value {
+        font-family: 'Anton', sans-serif;
+        font-size: 4rem;
+        color: #FBBF24;
+        line-height: 1;
+    }
+    
+    .score-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #6B7280;
+        margin-top: 0.5rem;
+    }
+    
+    .compatibility-stats {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .stat-box {
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: #6B7280;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #FFFFFF;
+        margin-left: 0.5rem;
+    }
+    
+    /* Solo Results Header */
+    .solo-results-header {
+        background-color: #0F0F0F;
+        border-left: 4px solid #22C55E;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .solo-results-icon {
+        font-size: 2.5rem;
+    }
+    
+    .solo-results-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+    }
+    
+    .solo-results-meta {
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+    
+    /* Results Section Title */
+    .results-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.5rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    /* Movie Grid */
+    .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .movies-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .movies-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    /* Movie Card - Same as Home Page */
+    .cinema-movie-card {
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        overflow: hidden;
+        transition: transform 0.2s ease-out, border-color 0.1s;
+        position: relative;
+        display: block;
+        text-decoration: none;
+    }
+    
+    .cinema-movie-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: #DC2626;
+        z-index: 10;
+    }
+    
+    .cinema-movie-card:hover .cinema-movie-overlay {
+        opacity: 1;
+    }
+    
+    .cinema-movie-poster {
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        background-color: #0F0F0F;
+        display: block;
+    }
+    
+    .cinema-movie-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 1rem;
+        opacity: 0;
+        transition: opacity 0.2s ease-out;
+        border-top: 2px solid #DC2626;
+    }
+    
+    .cinema-movie-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .cinema-movie-rating {
+        font-family: 'Anton', sans-serif;
+        font-size: 0.875rem;
+        color: #FBBF24;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    .cinema-movie-meta {
+        font-size: 0.75rem;
+        color: #6B7280;
+        margin-top: 0.25rem;
+    }
+    
+    /* Score Badge */
+    .score-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: #22C55E;
+        color: #000000;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    /* No Results */
+    .no-results-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+    
+    .no-results-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .no-results-text {
+        font-size: 1rem;
+        color: #6B7280;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* No Friends Message */
+    .no-friends-box {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .no-friends-text {
+        font-size: 0.875rem;
+        color: #6B7280;
+        margin-bottom: 0.75rem;
+    }
+    
+    .no-friends-link {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #3B82F6;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+    }
+    
+    .no-friends-link:hover {
+        opacity: 0.8;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .compatibility-users {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .compatibility-stats {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quick-match-container">
+    <div class="max-w-4xl mx-auto px-6 py-12">
+        
+        {% if show_results and recommendations %}
+        <!-- ===== RESULTS PAGE ===== -->
+        <a href="{% url 'quick_match' %}" class="back-link">← Yeni Öneri Al</a>
+        
+        {% if mode == 'friend' and selected_friend %}
+        <!-- FRIEND MODE - Compatibility Card -->
+        <div class="compatibility-card">
+            <div class="compatibility-users">
+                <div class="user-block">
+                    <div class="user-avatar-large user-1">
+                        {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                        {% else %}
+                        {{ user.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    <p class="user-name-large">{{ user.username }}</p>
+                </div>
+                
+                <div class="compatibility-score">
+                    <div class="score-value">%{{ compatibility.score }}</div>
+                    <p class="score-label">Uyumluluk</p>
+                </div>
+                
+                <div class="user-block">
+                    <div class="user-avatar-large user-2">
+                        {% if selected_friend.profile_picture %}
+                        <img src="{{ selected_friend.profile_picture.url }}" alt="{{ selected_friend.username }}">
+                        {% else %}
+                        {{ selected_friend.username|first|upper }}
+                        {% endif %}
+                    </div>
+                    <p class="user-name-large">{{ selected_friend.username }}</p>
+                </div>
+            </div>
+            
+            <div class="compatibility-stats">
+                <div class="stat-box">
+                    <span class="stat-label">Ortak İzlenenler:</span>
+                    <span class="stat-value">{{ compatibility.common_movies }}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Tür Benzerliği:</span>
+                    <span class="stat-value">%{{ compatibility.genre_similarity }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="results-title">🎬 Birlikte İzleyebileceğiniz Filmler</h2>
+        {% else %}
+        <!-- SOLO MODE - Header -->
+        <div class="solo-results-header">
+            <div class="solo-results-icon">🎯</div>
+            <div>
+                <h2 class="solo-results-title">Senin İçin Özel Öneriler</h2>
+                <p class="solo-results-meta">
+                    {% if mood %}{{ mood }} mod{% endif %}
+                    {% if time_available %}• {{ time_available }} süre{% endif %}
+                    {% if era %}• {{ era }} dönem{% endif %}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Movie Results - Same style as Home Page -->
+        {% if recommendations %}
+        <div class="movies-grid">
+            {% for rec in recommendations %}
+            <a href="{% url 'movie_detail' rec.movie.id %}" class="cinema-movie-card">
+                <img src="{{ rec.movie.poster_url }}" alt="{{ rec.movie.title }}" class="cinema-movie-poster" loading="lazy">
+                
+                <!-- Score Badge -->
+                <div class="score-badge">
+                    {% if mode == 'friend' %}
+                    {{ rec.combined_score|floatformat:0 }}%
+                    {% else %}
+                    {{ rec.final_score|floatformat:0|default:"85" }}%
+                    {% endif %}
+                </div>
+                
+                <!-- Overlay - appears on hover at bottom (same as home page) -->
+                <div class="cinema-movie-overlay">
+                    <h3 class="cinema-movie-title">{{ rec.movie.title }}</h3>
+                    <div class="cinema-movie-rating">
+                        <span>★</span> {{ rec.movie.vote_average|floatformat:1 }} / 10
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results-card">
+            <div class="no-results-icon">🤷</div>
+            <p class="no-results-text">Bu kriterlere uygun film bulunamadı.</p>
+            <a href="{% url 'quick_match' %}" class="btn-primary">Farklı Kriterler Dene</a>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        
+        <!-- ===== FORM PAGE ===== -->
+        <div class="mb-8">
+            <p class="page-subtitle">MatchFlix</p>
+            <h1 class="page-title">Hızlı Eşleşme</h1>
+            <p class="page-description">Tek başına veya arkadaşınla birlikte izleyebileceğin filmleri keşfet!</p>
+        </div>
+        
+        {% if error %}
+        <div class="error-box">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST">
+            {% csrf_token %}
+            
+            <!-- Step 1: Mode Selection -->
+            <div class="mb-8">
+                <h2 class="section-header">
+                    <span class="section-step">1</span>
+                    Nasıl izleyeceksin?
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mode" value="solo" class="hidden peer" checked onchange="toggleFriendSection()">
+                        <div class="selection-card peer-checked:selected">
+                            <div class="selection-card-icon">👤</div>
+                            <p class="selection-card-title">Tek Başıma</p>
+                            <p class="selection-card-desc">Bana özel öneriler</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mode" value="friend" class="hidden peer" onchange="toggleFriendSection()">
+                        <div class="selection-card peer-checked:selected">
+                            <div class="selection-card-icon">👥</div>
+                            <p class="selection-card-title">Arkadaşımla</p>
+                            <p class="selection-card-desc">Birlikte izleyeceğiz</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Step 2: Friend Selection (Friend Mode Only) -->
+            <div id="friendSection" class="hidden mb-8">
+                <h2 class="section-header">
+                    <span class="section-step">2</span>
+                    Arkadaşını seç
+                </h2>
+                {% if friends %}
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {% for friend in friends %}
+                    <label class="cursor-pointer">
+                        <input type="radio" name="friend_id" value="{{ friend.id }}" class="hidden peer">
+                        <div class="friend-card peer-checked:selected">
+                            <div class="friend-avatar">
+                                {% if friend.profile_picture %}
+                                <img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}">
+                                {% else %}
+                                {{ friend.username|first|upper }}
+                                {% endif %}
+                            </div>
+                            <p class="friend-name">{{ friend.username }}</p>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-friends-box">
+                    <p class="no-friends-text">Henüz arkadaşın yok</p>
+                    <a href="{% url 'friends' %}" class="no-friends-link">Arkadaş ekle →</a>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Step 2/3: Mood Selection -->
+            <div class="mb-8">
+                <h2 class="section-header">
+                    <span class="section-step" id="stepMood">2</span>
+                    Bugün ne izlemek istiyorsun?
+                    <span class="section-optional">Opsiyonel</span>
+                </h2>
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mood" value="" class="hidden peer" checked>
+                        <div class="mini-card peer-checked:selected">
+                            <div class="mini-card-icon">🎲</div>
+                            <p class="mini-card-label">Sürpriz</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mood" value="happy" class="hidden peer">
+                        <div class="mini-card peer-checked:selected">
+                            <div class="mini-card-icon">😄</div>
+                            <p class="mini-card-label">Neşeli</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mood" value="emotional" class="hidden peer">
+                        <div class="mini-card peer-checked:selected">
+                            <div class="mini-card-icon">😢</div>
+                            <p class="mini-card-label">Duygusal</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mood" value="excited" class="hidden peer">
+                        <div class="mini-card peer-checked:selected">
+                            <div class="mini-card-icon">🔥</div>
+                            <p class="mini-card-label">Aksiyon</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mood" value="thoughtful" class="hidden peer">
+                        <div class="mini-card peer-checked:selected">
+                            <div class="mini-card-icon">🤔</div>
+                            <p class="mini-card-label">Düşündürücü</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="mood" value="scared" class="hidden peer">
+                        <div class="mini-card peer-checked:selected">
+                            <div class="mini-card-icon">😱</div>
+                            <p class="mini-card-label">Korku</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Step 3/4 & 4/5: Time & Era -->
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Time Selection -->
+                <div>
+                    <h2 class="section-header">
+                        <span class="section-step" id="stepTime">3</span>
+                        Ne kadar vaktin var?
+                    </h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="time_available" value="" class="hidden peer" checked>
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">🕐</div>
+                                <p class="mini-card-label">Fark etmez</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="time_available" value="short" class="hidden peer">
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">⚡</div>
+                                <p class="mini-card-label">&lt;90dk</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="time_available" value="medium" class="hidden peer">
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">⏱️</div>
+                                <p class="mini-card-label">90-120dk</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="time_available" value="long" class="hidden peer">
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">🎬</div>
+                                <p class="mini-card-label">&gt;120dk</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Era Selection -->
+                <div>
+                    <h2 class="section-header">
+                        <span class="section-step" id="stepEra">4</span>
+                        Hangi dönemden?
+                    </h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="era" value="" class="hidden peer" checked>
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">🌍</div>
+                                <p class="mini-card-label">Tüm dönemler</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="era" value="recent" class="hidden peer">
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">🆕</div>
+                                <p class="mini-card-label">2020+</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="era" value="2010s" class="hidden peer">
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">📱</div>
+                                <p class="mini-card-label">2010'lar</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="era" value="classic" class="hidden peer">
+                            <div class="mini-card peer-checked:selected">
+                                <div class="mini-card-icon">🎞️</div>
+                                <p class="mini-card-label">Klasikler</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 5: Genre Selection (Solo Mode Only) -->
+            <div id="genreSection" class="mb-8">
+                <h2 class="section-header">
+                    <span class="section-step" id="stepGenre">5</span>
+                    Belirli bir tür?
+                    <span class="section-optional">Opsiyonel</span>
+                </h2>
+                <select name="genre_id" class="genre-select">
+                    <option value="">Tüm Türler</option>
+                    {% for genre in genres %}
+                    <option value="{{ genre.id }}">{{ genre.name_tr|default:genre.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="flex justify-center pt-4">
+                <button type="submit" class="submit-btn">
+                    🎯 Öneri Al
+                </button>
+            </div>
+        </form>
+        
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleFriendSection() {
+    var mode = document.querySelector('input[name="mode"]:checked').value;
+    var friendSection = document.getElementById('friendSection');
+    var genreSection = document.getElementById('genreSection');
+    
+    // Update card styles
+    var soloCard = document.querySelector('input[value="solo"]').nextElementSibling;
+    var friendCard = document.querySelector('input[value="friend"]').nextElementSibling;
+    
+    if (mode === 'friend') {
+        friendSection.classList.remove('hidden');
+        genreSection.classList.add('hidden');
+        soloCard.classList.remove('selected');
+        friendCard.classList.add('selected');
+        document.getElementById('stepMood').textContent = '3';
+        document.getElementById('stepTime').textContent = '4';
+        document.getElementById('stepEra').textContent = '5';
+    } else {
+        friendSection.classList.add('hidden');
+        genreSection.classList.remove('hidden');
+        soloCard.classList.add('selected');
+        friendCard.classList.remove('selected');
+        document.getElementById('stepMood').textContent = '2';
+        document.getElementById('stepTime').textContent = '3';
+        document.getElementById('stepEra').textContent = '4';
+        document.getElementById('stepGenre').textContent = '5';
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Add selected class to checked cards on load
+    var checkedInputs = document.querySelectorAll('input[type="radio"]:checked');
+    checkedInputs.forEach(function(input) {
+        var card = input.nextElementSibling;
+        if (card && (card.classList.contains('selection-card') || card.classList.contains('mini-card') || card.classList.contains('friend-card'))) {
+            card.classList.add('selected');
+        }
+    });
+    
+    // Add click handlers for all radio cards
+    var radioInputs = document.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(function(input) {
+        input.addEventListener('change', function() {
+            var name = this.name;
+            var allCards = document.querySelectorAll('input[name="' + name + '"]');
+            allCards.forEach(function(radio) {
+                var card = radio.nextElementSibling;
+                if (card) {
+                    if (radio.checked) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

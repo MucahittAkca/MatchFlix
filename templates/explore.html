@@ -1,0 +1,1030 @@
+{% extends 'base.html' %}
+
+{% block title %}Keşfet - MatchFlix{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ========================================
+       EXPLORE PAGE - CINEMATIC DARK THEME
+       No gradients, solid colors only
+    ======================================== */
+    
+    .explore-container {
+        background-color: #000000;
+        min-height: 100vh;
+    }
+    
+    /* Page Title - Cinematic Editorial Style */
+    .explore-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 3.5rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+    
+    .explore-subtitle {
+        color: #6B7280;
+        font-size: 1rem;
+        font-weight: 400;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+    
+    /* Search Section */
+    .search-container {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .search-input-wrapper {
+        position: relative;
+        max-width: 100%;
+    }
+    
+    .search-input {
+        width: 100%;
+        background-color: #000000;
+        border: 2px solid #27272A;
+        color: #FFFFFF;
+        padding: 1rem 1.25rem;
+        padding-left: 3rem;
+        padding-right: 7rem;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .search-input::placeholder {
+        color: #4B5563;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #DC2626;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #4B5563;
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+    
+    .search-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #DC2626;
+        color: #FFFFFF;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+    }
+    
+    .search-btn:hover {
+        opacity: 0.9;
+    }
+    
+    /* Live Search Dropdown */
+    .live-search-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin-top: 0.5rem;
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        z-index: 50;
+        max-height: 24rem;
+        overflow-y: auto;
+    }
+    
+    .live-search-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .live-search-dropdown::-webkit-scrollbar-track {
+        background: #0F0F0F;
+    }
+    
+    .live-search-dropdown::-webkit-scrollbar-thumb {
+        background: #27272A;
+    }
+    
+    .search-category-label {
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #6B7280;
+        background-color: #1A1A1A;
+        border-bottom: 1px solid #27272A;
+    }
+    
+    .search-result-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #1A1A1A;
+        transition: background-color 0.15s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .search-result-item:hover {
+        background-color: #1A1A1A;
+    }
+    
+    .search-result-poster {
+        width: 2.5rem;
+        height: 3.5rem;
+        background-color: #1A1A1A;
+        flex-shrink: 0;
+        object-fit: cover;
+    }
+    
+    .search-result-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .search-result-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .search-result-meta {
+        font-size: 0.75rem;
+        color: #6B7280;
+    }
+    
+    .search-result-rating {
+        color: #FBBF24;
+    }
+    
+    .search-result-new {
+        color: #22C55E;
+        font-weight: 600;
+    }
+    
+    /* Search Results Info */
+    .search-results-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #0F0F0F;
+        border-left: 3px solid #DC2626;
+    }
+    
+    .results-count {
+        font-size: 0.875rem;
+        color: #D1D5DB;
+    }
+    
+    .results-count strong {
+        color: #FFFFFF;
+        font-weight: 700;
+    }
+    
+    .results-count .count-number {
+        color: #DC2626;
+        font-weight: 900;
+        font-size: 1.25rem;
+    }
+    
+    .clear-search-btn {
+        font-size: 0.75rem;
+        color: #EF4444;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+        background: none;
+        border: none;
+    }
+    
+    .clear-search-btn:hover {
+        opacity: 0.7;
+    }
+    
+    .tmdb-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        background-color: #22C55E;
+        color: #000000;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    /* Main Layout */
+    .explore-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .explore-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Filters Sidebar */
+    .filters-sidebar {
+        position: sticky;
+        top: 6rem;
+        height: fit-content;
+    }
+    
+    .filters-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 1.5rem;
+    }
+    
+    .filters-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #27272A;
+    }
+    
+    .filters-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #FFFFFF;
+    }
+    
+    .filters-clear {
+        font-size: 0.75rem;
+        color: #EF4444;
+        cursor: pointer;
+        background: none;
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        transition: opacity 0.2s ease;
+    }
+    
+    .filters-clear:hover {
+        opacity: 0.7;
+    }
+    
+    .filter-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #6B7280;
+        margin-bottom: 0.75rem;
+    }
+    
+    .filter-select {
+        width: 100%;
+        background-color: #000000;
+        border: 1px solid #27272A;
+        color: #FFFFFF;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+    }
+    
+    .filter-select:focus {
+        outline: none;
+        border-color: #3B82F6;
+    }
+    
+    .filter-select option {
+        background-color: #0F0F0F;
+        color: #FFFFFF;
+    }
+    
+    .filter-input {
+        width: 100%;
+        background-color: #000000;
+        border: 1px solid #27272A;
+        color: #FFFFFF;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .filter-input:focus {
+        outline: none;
+        border-color: #3B82F6;
+    }
+    
+    .filter-input::placeholder {
+        color: #4B5563;
+    }
+    
+    /* Rating Range Slider */
+    .rating-slider-container {
+        position: relative;
+    }
+    
+    .rating-slider {
+        width: 100%;
+        height: 4px;
+        background-color: #27272A;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+    }
+    
+    .rating-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background-color: #DC2626;
+        cursor: pointer;
+    }
+    
+    .rating-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background-color: #DC2626;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .rating-value {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: #6B7280;
+    }
+    
+    .rating-value-current {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #FBBF24;
+    }
+    
+    /* Movies Grid */
+    .movies-section {
+        flex: 1;
+    }
+    
+    .movies-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+    }
+    
+    @media (max-width: 1280px) {
+        .movies-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .movies-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    /* Movie Card - Cinematic Style */
+    .film-card {
+        position: relative;
+        background-color: #0F0F0F;
+        border: 1px solid transparent;
+        overflow: hidden;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    
+    .film-card:hover {
+        transform: translateY(-4px);
+        border-color: #DC2626;
+    }
+    
+    .film-poster {
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        display: block;
+        background-color: #1A1A1A;
+    }
+    
+    .film-poster-placeholder {
+        width: 100%;
+        aspect-ratio: 2/3;
+        background-color: #1A1A1A;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        text-align: center;
+        color: #4B5563;
+        font-size: 0.75rem;
+    }
+    
+    .film-card-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1rem;
+        transition: background-color 0.2s ease;
+    }
+    
+    .film-card:hover .film-card-overlay {
+        background-color: rgba(0, 0, 0, 0.75);
+    }
+    
+    .film-card-info {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    
+    .film-card:hover .film-card-info {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .film-card-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #FFFFFF;
+        margin-bottom: 0.25rem;
+        line-height: 1.3;
+    }
+    
+    .film-card-rating {
+        font-size: 0.75rem;
+        color: #FBBF24;
+        font-weight: 600;
+    }
+    
+    .film-card-year {
+        font-size: 0.75rem;
+        color: #6B7280;
+    }
+    
+    /* Static Rating Badge */
+    .film-rating-badge {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        background-color: #000000;
+        color: #FBBF24;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid #FBBF24;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    
+    .film-card:hover .film-rating-badge {
+        opacity: 1;
+    }
+    
+    /* No Results */
+    .no-results {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem 2rem;
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+    }
+    
+    .no-results-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .no-results-text {
+        font-size: 1rem;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+    
+    /* Pagination */
+    .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 3rem;
+        flex-wrap: wrap;
+    }
+    
+    .pagination-btn {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        color: #D1D5DB;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    
+    .pagination-btn:hover {
+        border-color: #DC2626;
+        color: #FFFFFF;
+    }
+    
+    .pagination-info {
+        color: #6B7280;
+        font-size: 0.875rem;
+        padding: 0 1rem;
+        font-weight: 500;
+    }
+    
+    .pagination-info strong {
+        color: #FFFFFF;
+    }
+    
+    /* Loading States */
+    .loading-spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #27272A;
+        border-top-color: #3B82F6;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Fade In Animation */
+    .fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Mobile Filters Toggle */
+    @media (max-width: 1024px) {
+        .filters-sidebar {
+            position: static;
+        }
+        
+        .explore-title {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="explore-container">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <p class="explore-subtitle">MatchFlix</p>
+            <h1 class="explore-title" data-i18n="explore">Keşfet</h1>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" 
+                       id="searchInput"
+                       name="search" 
+                       placeholder="Film ara... (yazmaya başla)" 
+                       data-i18n-placeholder="searchPlaceholder"
+                       value="{{ current_filters.search }}"
+                       autocomplete="off"
+                       class="search-input"
+                       oninput="handleLiveSearch(this.value)"
+                       onkeypress="if(event.key === 'Enter') { event.preventDefault(); doSearch(); }"
+                       onfocus="if(this.value.length >= 2) showDropdown()"
+                       onblur="setTimeout(() => hideDropdown(), 200)">
+                
+                <!-- Loading Spinner -->
+                <div id="liveSearchLoading" class="hidden" style="position: absolute; right: 6rem; top: 50%; transform: translateY(-50%);">
+                    <div class="loading-spinner"></div>
+                </div>
+                
+                <button onclick="doSearch()" class="search-btn" data-i18n="search">ARA</button>
+                
+                <!-- Live Search Dropdown -->
+                <div id="liveSearchDropdown" class="hidden live-search-dropdown">
+                    <div id="liveSearchResults"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search/Filter Results Info -->
+        {% if current_filters.search or current_filters.genre or current_filters.rating_gte or current_filters.year %}
+        <div class="search-results-info">
+            <div class="results-count">
+                {% if current_filters.search %}
+                "<strong>{{ current_filters.search }}</strong>" için 
+                {% endif %}
+                <span class="count-number" id="resultCount">{{ movies.paginator.count }}</span> sonuç
+                <span id="tmdbLoadingIndicator" class="hidden" style="margin-left: 0.5rem;">
+                    <span class="loading-spinner" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></span>
+                </span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span id="tmdbBadge" class="hidden tmdb-badge">✓ TMDB</span>
+                {% if current_filters.search %}
+                <button onclick="clearSearch()" class="clear-search-btn" data-i18n="clearSearch">✕ Aramayı Temizle</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Main Layout -->
+        <div class="explore-layout">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <div class="filters-card">
+                    <div class="filters-header">
+                        <h3 class="filters-title" data-i18n="filters">Filtreler</h3>
+                        {% if current_filters.genre or current_filters.rating_gte or current_filters.year %}
+                        <button onclick="clearFilters()" class="filters-clear" data-i18n="clear">Temizle</button>
+                        {% endif %}
+                    </div>
+
+                    <!-- Genre Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" data-i18n="genre">Tür</label>
+                        <select id="genreSelect" name="genre" onchange="applyFilters()" class="filter-select">
+                            <option value="" data-i18n="all">Tümü</option>
+                            {% for genre in genres %}
+                            <option value="{{ genre.id }}" {% if current_filters.genre == genre.id|stringformat:"s" %}selected{% endif %}>{{ genre.name_tr|default:genre.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Rating Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" data-i18n="minRating">Min. Puan</label>
+                        <div class="rating-slider-container">
+                            <input type="range" id="ratingRange" name="rating" min="0" max="10" step="0.5" value="{{ current_filters.rating_gte|default:'0' }}" class="rating-slider" onchange="applyFilters()" oninput="updateRatingDisplay(this.value)">
+                            <div class="rating-value">
+                                <span>0</span>
+                                <span class="rating-value-current" id="ratingValue">{{ current_filters.rating_gte|default:'0' }}</span>
+                                <span>10</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Year Filter -->
+                    <div class="filter-group">
+                        <label class="filter-label" data-i18n="year">Yıl</label>
+                        <input type="number" id="yearInput" name="year" placeholder="2024" value="{{ current_filters.year }}" class="filter-input" onchange="applyFilters()">
+                    </div>
+
+                    <!-- Sorting -->
+                    <div class="filter-group" style="margin-bottom: 0;">
+                        <label class="filter-label" data-i18n="sorting">Sıralama</label>
+                        <select id="orderingSelect" name="ordering" onchange="applyFilters()" class="filter-select">
+                            <option value="-popularity" {% if current_filters.ordering == '-popularity' %}selected{% endif %} data-i18n="popularity">Popülerlik</option>
+                            <option value="-vote_average" {% if current_filters.ordering == '-vote_average' %}selected{% endif %} data-i18n="highestRating">En Yüksek Puan</option>
+                            <option value="-release_date" {% if current_filters.ordering == '-release_date' %}selected{% endif %} data-i18n="newest">En Yeni</option>
+                            <option value="title" {% if current_filters.ordering == 'title' %}selected{% endif %}>A-Z</option>
+                        </select>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Movies Grid -->
+            <div class="movies-section">
+                <div id="moviesGrid" class="movies-grid">
+                    {% for movie in movies %}
+                    <a href="{% url 'movie_detail' movie.id %}" class="film-card" data-movie-id="{{ movie.id }}">
+                        {% if movie.poster_url %}
+                        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="film-poster" loading="lazy">
+                        {% else %}
+                        <div class="film-poster-placeholder">{{ movie.title }}</div>
+                        {% endif %}
+                        <div class="film-rating-badge">★ {{ movie.vote_average|floatformat:1 }}</div>
+                        <div class="film-card-overlay">
+                            <div class="film-card-info">
+                                <h3 class="film-card-title">{{ movie.title }}</h3>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span class="film-card-rating">★ {{ movie.vote_average|floatformat:1 }}/10</span>
+                                    {% if movie.release_date %}
+                                    <span class="film-card-year">• {{ movie.release_date.year }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <div class="no-results" id="noResultsMsg">
+                        <div class="no-results-icon">🎬</div>
+                        <p class="no-results-text">Film bulunamadı</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if paginator.num_pages > 1 %}
+                <div class="pagination">
+                    {% if movies.has_previous %}
+                    <a href="javascript:void(0)" onclick="goToPage(1)" class="pagination-btn">İlk</a>
+                    <a href="javascript:void(0)" onclick="goToPage({{ movies.previous_page_number }})" class="pagination-btn">← Önceki</a>
+                    {% endif %}
+                    <span class="pagination-info">Sayfa <strong>{{ movies.number }}</strong> / <strong>{{ paginator.num_pages }}</strong></span>
+                    {% if movies.has_next %}
+                    <a href="javascript:void(0)" onclick="goToPage({{ movies.next_page_number }})" class="pagination-btn">Sonraki →</a>
+                    <a href="javascript:void(0)" onclick="goToPage({{ paginator.num_pages }})" class="pagination-btn">Son</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Existing movie IDs (to prevent duplicates)
+const existingMovieIds = new Set([
+    {% for movie in movies %}{{ movie.id }},{% endfor %}
+]);
+
+// Live Search variables
+let searchTimeout = null;
+let currentQuery = '';
+
+function updateRatingDisplay(value) {
+    document.getElementById('ratingValue').textContent = value;
+}
+
+// ===== LIVE SEARCH =====
+function handleLiveSearch(value) {
+    const query = value.trim();
+    clearTimeout(searchTimeout);
+    
+    if (query.length < 2) {
+        hideDropdown();
+        return;
+    }
+    
+    currentQuery = query;
+    searchTimeout = setTimeout(() => {
+        performLiveSearch(query);
+    }, 300);
+}
+
+async function performLiveSearch(query) {
+    if (query !== currentQuery) return;
+    
+    const dropdown = document.getElementById('liveSearchDropdown');
+    const results = document.getElementById('liveSearchResults');
+    const loading = document.getElementById('liveSearchLoading');
+    
+    loading.classList.remove('hidden');
+    dropdown.classList.remove('hidden');
+    results.innerHTML = '<div style="padding: 1rem; text-align: center; color: #6B7280; font-size: 0.875rem;">Aranıyor...</div>';
+    
+    try {
+        const localResponse = await fetch('/api/live-search/?q=' + encodeURIComponent(query));
+        const localData = await localResponse.json();
+        
+        if (query !== currentQuery) return;
+        
+        let html = '';
+        
+        if (localData.local && localData.local.length > 0) {
+            html += '<div class="search-category-label">📚 Kütüphane</div>';
+            html += localData.local.map(movie => createLiveSearchItem(movie)).join('');
+        }
+        
+        results.innerHTML = html || '<div style="padding: 1rem; text-align: center; color: #6B7280; font-size: 0.875rem;">Sonuç bulunamadı</div>';
+        
+        const tmdbResponse = await fetch('/api/live-search/tmdb/?q=' + encodeURIComponent(query));
+        const tmdbData = await tmdbResponse.json();
+        
+        if (query !== currentQuery) return;
+        
+        loading.classList.add('hidden');
+        
+        if (tmdbData.tmdb && tmdbData.tmdb.length > 0) {
+            const tmdbHtml = '<div class="search-category-label" style="border-top: 1px solid #27272A;">🌐 TMDB</div>' + 
+                           tmdbData.tmdb.map(movie => createLiveSearchItem(movie, true)).join('');
+            results.innerHTML += tmdbHtml;
+        }
+        
+        if ((!localData.local || localData.local.length === 0) && (!tmdbData.tmdb || tmdbData.tmdb.length === 0)) {
+            results.innerHTML = '<div style="padding: 1rem; text-align: center; color: #6B7280; font-size: 0.875rem;">Sonuç bulunamadı</div>';
+        }
+        
+        results.innerHTML += '<div style="padding: 1rem; border-top: 1px solid #27272A;"><button onclick="doSearch()" style="width: 100%; background-color: #DC2626; color: #FFFFFF; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: none; cursor: pointer;">"' + query + '" için tüm sonuçları gör →</button></div>';
+        
+    } catch (error) {
+        console.error('Live search error:', error);
+        loading.classList.add('hidden');
+        results.innerHTML = '<div style="padding: 1rem; text-align: center; color: #EF4444; font-size: 0.875rem;">Arama hatası</div>';
+    }
+}
+
+function createLiveSearchItem(movie, isTmdb) {
+    const posterUrl = movie.poster_url || '';
+    const year = movie.year || 'N/A';
+    const rating = movie.vote_average ? movie.vote_average.toFixed(1) : '0.0';
+    const isTmdbFlag = isTmdb || false;
+    
+    let posterHtml = posterUrl 
+        ? '<img src="' + posterUrl + '" alt="' + movie.title + '" style="width: 100%; height: 100%; object-fit: cover;">'
+        : '?';
+    
+    let newBadge = isTmdbFlag ? '<span class="search-result-new"> +yeni</span>' : '';
+    
+    return '<a href="/movie/' + movie.id + '/" class="search-result-item"><div class="search-result-poster" style="display: flex; align-items: center; justify-content: center; color: #4B5563; font-size: 0.75rem;">' + posterHtml + '</div><div class="search-result-info"><div class="search-result-title">' + movie.title + '</div><div class="search-result-meta">' + year + ' • <span class="search-result-rating">★ ' + rating + '</span>' + newBadge + '</div></div></a>';
+}
+
+function showDropdown() {
+    const dropdown = document.getElementById('liveSearchDropdown');
+    const results = document.getElementById('liveSearchResults');
+    if (results.innerHTML.trim()) {
+        dropdown.classList.remove('hidden');
+    }
+}
+
+function hideDropdown() {
+    document.getElementById('liveSearchDropdown').classList.add('hidden');
+    document.getElementById('liveSearchLoading').classList.add('hidden');
+}
+
+function buildFilterUrl(page) {
+    const search = document.getElementById('searchInput').value.trim();
+    const genre = document.getElementById('genreSelect').value;
+    const rating = document.getElementById('ratingRange').value;
+    const year = document.getElementById('yearInput').value;
+    const ordering = document.getElementById('orderingSelect').value;
+
+    let params = new URLSearchParams();
+    
+    if (search) params.append('search', search);
+    if (genre) params.append('genre', genre);
+    if (rating > 0) params.append('rating_gte', rating);
+    if (year) params.append('year', year);
+    if (ordering && ordering !== '-popularity') params.append('ordering', ordering);
+    if (page && page > 1) params.append('page', page);
+
+    return '?' + params.toString();
+}
+
+function doSearch() {
+    const query = document.getElementById('searchInput').value.trim();
+    
+    if (!query || query.length < 2) {
+        showToast('En az 2 karakter girin', 'warning');
+        return;
+    }
+    
+    window.location.href = '?search=' + encodeURIComponent(query);
+}
+
+function applyFilters() {
+    window.location.href = buildFilterUrl();
+}
+
+function goToPage(page) {
+    window.location.href = buildFilterUrl(page);
+}
+
+function clearFilters() {
+    const search = document.getElementById('searchInput').value.trim();
+    if (search) {
+        window.location.href = '?search=' + encodeURIComponent(search);
+    } else {
+        window.location.href = '{% url "explore" %}';
+    }
+}
+
+function clearSearch() {
+    window.location.href = '{% url "explore" %}';
+}
+
+function createMovieCard(movie) {
+    const posterHtml = movie.poster_url 
+        ? '<img src="' + movie.poster_url + '" alt="' + movie.title + '" class="film-poster" loading="lazy">'
+        : '<div class="film-poster-placeholder">' + movie.title + '</div>';
+    
+    const year = movie.release_date ? new Date(movie.release_date).getFullYear() : '';
+    const yearHtml = year ? '<span class="film-card-year">• ' + year + '</span>' : '';
+    
+    return '<a href="/movie/' + movie.id + '/" class="film-card fade-in" data-movie-id="' + movie.id + '">' + posterHtml + '<div class="film-rating-badge">★ ' + movie.vote_average.toFixed(1) + '</div><div class="film-card-overlay"><div class="film-card-info"><h3 class="film-card-title">' + movie.title + '</h3><div style="display: flex; align-items: center; gap: 0.5rem;"><span class="film-card-rating">★ ' + movie.vote_average.toFixed(1) + '/10</span>' + yearHtml + '</div></div></div></a>';
+}
+
+async function loadTMDBMovies() {
+    const loadingIndicator = document.getElementById('tmdbLoadingIndicator');
+    const tmdbBadge = document.getElementById('tmdbBadge');
+    const resultCount = document.getElementById('resultCount');
+    const moviesGrid = document.getElementById('moviesGrid');
+    const noResultsMsg = document.getElementById('noResultsMsg');
+    
+    if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    try {
+        const response = await fetch('/api/tmdb/async-search/?' + urlParams.toString());
+        const data = await response.json();
+        
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        
+        if (data.success && data.movies.length > 0) {
+            if (noResultsMsg) noResultsMsg.remove();
+            
+            let addedCount = 0;
+            data.movies.forEach(movie => {
+                if (!existingMovieIds.has(movie.id)) {
+                    existingMovieIds.add(movie.id);
+                    moviesGrid.insertAdjacentHTML('beforeend', createMovieCard(movie));
+                    addedCount++;
+                }
+            });
+            
+            if (addedCount > 0 && resultCount) {
+                const currentCount = parseInt(resultCount.textContent) || 0;
+                resultCount.textContent = currentCount + addedCount;
+                if (tmdbBadge) tmdbBadge.classList.remove('hidden');
+            }
+        }
+    } catch (error) {
+        console.error('TMDB search error:', error);
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const ratingRange = document.getElementById('ratingRange');
+    if (ratingRange) {
+        updateRatingDisplay(ratingRange.value);
+    }
+    
+    const shouldSearchTMDB = {{ should_search_tmdb|yesno:"true,false" }};
+    if (shouldSearchTMDB) {
+        setTimeout(loadTMDBMovies, 100);
+    }
+});
+</script>
+{% endblock %}

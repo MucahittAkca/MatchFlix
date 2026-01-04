@@ -1,0 +1,543 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MatchFlix - Sinematik Deneyim{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    /* ========================================
+       LANDING PAGE - CINEMATIC DARK THEME
+       No gradients, solid colors only
+    ======================================== */
+    
+    body {
+        background-color: #000000 !important;
+        color: #FFFFFF !important;
+    }
+    
+    .navbar {
+        background-color: #000000 !important;
+        border-bottom: 1px solid #27272A !important;
+        backdrop-filter: none !important;
+    }
+    
+    /* Typography */
+    .font-marquee {
+        font-family: 'Anton', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        line-height: 0.95;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        background-color: #000000;
+        position: relative;
+        overflow: hidden;
+        padding-top: 20px;
+    }
+    
+    .hero-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: center;
+    }
+    
+    @media (max-width: 1024px) {
+        .hero-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+    }
+    
+    /* Main Title */
+    .hero-title {
+        font-family: 'Anton', sans-serif;
+        font-size: clamp(3rem, 7vw, 5.5rem);
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+    }
+    
+    .hero-title .white {
+        color: #FFFFFF;
+        display: block;
+    }
+    
+    .hero-title .red {
+        color: #DC2626;
+        display: block;
+    }
+    
+    /* Subtitle */
+    .hero-subtitle {
+        font-size: 1.125rem;
+        color: #9CA3AF;
+        line-height: 1.6;
+        max-width: 480px;
+        margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .hero-subtitle {
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+    
+    /* Buttons */
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    @media (max-width: 1024px) {
+        .hero-buttons {
+            justify-content: center;
+        }
+    }
+    
+    .btn-hero-primary {
+        background-color: #DC2626;
+        color: #FFFFFF;
+        padding: 1rem 2rem;
+        font-family: 'Anton', sans-serif;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+    }
+    
+    .btn-hero-primary:hover {
+        background-color: #991B1B;
+    }
+    
+    .btn-hero-outline {
+        background-color: transparent;
+        color: #FFFFFF;
+        padding: calc(1rem - 2px) calc(2rem - 2px);
+        font-family: 'Anton', sans-serif;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        display: inline-block;
+        border: 2px solid #FFFFFF;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-hero-outline:hover {
+        background-color: #FFFFFF;
+        color: #000000;
+    }
+    
+    /* Hero Image */
+    .hero-image-container {
+        position: relative;
+        max-width: 420px;
+        margin-left: auto;
+    }
+    
+    @media (max-width: 1024px) {
+        .hero-image-container {
+            display: none;
+        }
+    }
+    
+    .hero-image-frame {
+        position: relative;
+        border: 2px solid #27272A;
+        padding: 0.5rem;
+        background-color: #0F0F0F;
+    }
+    
+    .hero-image-frame::before {
+        content: '';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        right: -1rem;
+        bottom: -1rem;
+        border: 2px solid #DC2626;
+        z-index: -1;
+    }
+    
+    .hero-image {
+        width: 100%;
+        display: block;
+    }
+    
+    /* Features Section */
+    .features-section {
+        padding: 8rem 0;
+        background-color: #0F0F0F;
+        border-top: 1px solid #27272A;
+    }
+    
+    .features-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .features-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 4rem;
+    }
+    
+    .features-title {
+        font-family: 'Anton', sans-serif;
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        color: #FFFFFF;
+        text-transform: uppercase;
+    }
+    
+    .features-line {
+        width: 8rem;
+        height: 4px;
+        background-color: #DC2626;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .features-line {
+            display: none;
+        }
+    }
+    
+    /* Feature Cards Grid */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid #27272A;
+        border-left: 1px solid #27272A;
+    }
+    
+    @media (max-width: 768px) {
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .feature-card {
+        background-color: #1A1A1A;
+        border-right: 1px solid #27272A;
+        border-bottom: 1px solid #27272A;
+        padding: 2.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .feature-card:hover {
+        background-color: #242424;
+        border-color: #DC2626;
+    }
+    
+    .feature-number {
+        font-family: 'Anton', sans-serif;
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .feature-number.red { color: #DC2626; }
+    .feature-number.gold { color: #FBBF24; }
+    .feature-number.blue { color: #3B82F6; }
+    
+    .feature-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.5rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-desc {
+        font-size: 0.875rem;
+        color: #9CA3AF;
+        line-height: 1.6;
+    }
+    
+    /* Manifesto Section */
+    .manifesto-section {
+        padding: 8rem 0;
+        background-color: #000000;
+        border-top: 1px solid #27272A;
+    }
+    
+    .manifesto-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+    }
+    
+    @media (max-width: 768px) {
+        .manifesto-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .manifesto-title {
+        font-family: 'Anton', sans-serif;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+    }
+    
+    .manifesto-title .gray {
+        color: #4B5563;
+    }
+    
+    .manifesto-title .blue {
+        color: #3B82F6;
+    }
+    
+    .manifesto-line {
+        width: 6rem;
+        height: 4px;
+        background-color: #3B82F6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .manifesto-text {
+        font-size: 1.125rem;
+        color: #D1D5DB;
+        line-height: 1.7;
+    }
+    
+    /* Manifesto Visual Grid */
+    .manifesto-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .manifesto-box {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #27272A;
+    }
+    
+    .manifesto-box.dark {
+        background-color: #0F0F0F;
+    }
+    
+    .manifesto-box.blue {
+        background-color: #1E3A5F;
+        border-color: #3B82F6;
+    }
+    
+    .manifesto-box.white {
+        background-color: #FFFFFF;
+    }
+    
+    .manifesto-box .icon {
+        font-size: 3rem;
+    }
+    
+    .manifesto-box .percent {
+        font-family: 'Anton', sans-serif;
+        font-size: 3rem;
+        color: #FFFFFF;
+    }
+    
+    .manifesto-box .text {
+        font-family: 'Anton', sans-serif;
+        font-size: 2rem;
+        color: #000000;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+        padding: 8rem 0;
+        background-color: #DC2626;
+        text-align: center;
+    }
+    
+    .cta-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    
+    .cta-title {
+        font-family: 'Anton', sans-serif;
+        font-size: clamp(3rem, 8vw, 5rem);
+        color: #FFFFFF;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-subtitle {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 2.5rem;
+    }
+    
+    .btn-cta {
+        background-color: #000000;
+        color: #FFFFFF;
+        padding: 1.25rem 3rem;
+        font-family: 'Anton', sans-serif;
+        font-size: 1.125rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+    }
+    
+    .btn-cta:hover {
+        background-color: #1A1A1A;
+    }
+    
+    /* Remove gradient overrides */
+    .gradient-text {
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        -webkit-text-fill-color: unset !important;
+        color: #FFFFFF !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-container">
+        <!-- Left Content -->
+        <div>
+            
+            <h1 class="hero-title">
+                <span class="white" data-i18n="landingHero1">Durun, Kavga Etmeyin</span>
+                <span class="red" data-i18n="landingHero2">Ortak İzleyeceğiniz Filmi Buldum!</span>
+            </h1>
+            
+            <p class="hero-subtitle" data-i18n="landingDesc">
+                MatchFlix, iki kişinin farklı zevkleri olsa bile birlikte izleyecekleri mükemmel filmi bulur.
+            </p>
+            
+            <div class="hero-buttons">
+                <a href="{% url 'register' %}" class="btn-hero-primary" data-i18n="landingStart">Şimdi Başla</a>
+                <button onclick="scrollToFeatures()" class="btn-hero-outline" data-i18n="landingHow">Nasıl Çalışır?</button>
+            </div>
+        </div>
+        
+        <!-- Right Image -->
+        <div class="hero-image-container">
+            <div class="hero-image-frame">
+                <img src="{% static 'images/landing_page_image.png' %}" alt="MatchFlix" class="hero-image">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features-section">
+    <div class="features-container">
+        <div class="features-header">
+            <h2 class="features-title">Özellikler</h2>
+            <div class="features-line"></div>
+        </div>
+        
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="feature-number red">01</div>
+                <h3 class="feature-title" data-i18n="landingFeat1Title">Beğeni Analizi</h3>
+                <p class="feature-desc" data-i18n="landingFeat1Desc">
+                    Puanladığın filmlerden yola çıkarak zevkini analiz eder.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="feature-number gold">02</div>
+                <h3 class="feature-title" data-i18n="landingFeat2Title">Uyumluluk Skoru</h3>
+                <p class="feature-desc" data-i18n="landingFeat2Desc">
+                    Arkadaşınla ne kadar uyumlu olduğunu gösterir ve benzer zevk aldığınız türleri keşfetmeni sağlar.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="feature-number blue">03</div>
+                <h3 class="feature-title" data-i18n="landingFeat3Title">Hızlı Karar</h3>
+                <p class="feature-desc" data-i18n="landingFeat3Desc">
+                    Tartışmaya son vermenizi sağlar. Saniyeler içinde ikinizin de hoşlanacağı filmi bulur.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Manifesto Section -->
+<section class="manifesto-section">
+    <div class="manifesto-container">
+        <div>
+            <h2 class="manifesto-title">
+                SİNEMA <span class="gray">BİRLEŞTİRİR.</span><br>
+                BİZ <span class="blue">BULUŞTURURUZ.</span>
+            </h2>
+            <div class="manifesto-line"></div>
+            <p class="manifesto-text">
+                MatchFlix sadece bir algoritma değil. Modern çağın "Ne izlesek?" sorununa
+                verilmiş kesin, net ve estetik bir cevaptır. Karmaşık listelerle uğraşmazsınız.
+                Sadece sen, arkadaşın ve ortak film!
+            </p>
+        </div>
+        
+        <div class="manifesto-grid">
+            <div class="manifesto-box dark">
+                <span class="icon">🍿</span>
+            </div>
+            <div class="manifesto-box blue">
+                <span class="percent">98%</span>
+            </div>
+            <div class="manifesto-box white">
+                <span class="text">MATCH</span>
+            </div>
+            <div class="manifesto-box dark">
+                <span class="icon">🎬</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-container">
+        <h2 class="cta-title" data-i18n="landingReady">Hazır Mısın?</h2>
+        <p class="cta-subtitle" data-i18n="landingReadyDesc">
+            Perde açılıyor. Koltuğunu kap ve serüvene başla.
+        </p>
+        <a href="{% url 'register' %}" class="btn-cta" data-i18n="landingRegister">Şimdi Kaydol</a>
+    </div>
+</section>
+
+<script>
+function scrollToFeatures() {
+    document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+{% endblock %}

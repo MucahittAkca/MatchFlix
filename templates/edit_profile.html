@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% block title %}Profili Düzenle - MatchFlix{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* ========================================
+       EDIT PROFILE - CINEMATIC DARK THEME
+       No gradients, solid colors only
+    ======================================== */
+    
+    body {
+        background-color: #000000 !important;
+    }
+    
+    .edit-container {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+    }
+    
+    /* Main Card */
+    .edit-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 2.5rem;
+    }
+    
+    .page-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 2rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background-color: #DC2626;
+    }
+    
+    /* Avatar Section */
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #27272A;
+    }
+    
+    .avatar-preview {
+        width: 6rem;
+        height: 6rem;
+        background-color: #DC2626;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .avatar-upload {
+        flex: 1;
+    }
+    
+    .upload-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+    
+    .file-input {
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+    
+    .file-input::file-selector-button {
+        background-color: #DC2626;
+        color: #FFFFFF;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        cursor: pointer;
+        margin-right: 1rem;
+        transition: background-color 0.2s ease;
+    }
+    
+    .file-input::file-selector-button:hover {
+        background-color: #991B1B;
+    }
+    
+    /* Form Fields */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-input {
+        width: 100%;
+        background-color: #000000;
+        border: 1px solid #27272A;
+        color: #FFFFFF;
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-input::placeholder {
+        color: #4B5563;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #DC2626;
+    }
+    
+    .form-textarea {
+        width: 100%;
+        background-color: #000000;
+        border: 1px solid #27272A;
+        color: #FFFFFF;
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        resize: none;
+        min-height: 8rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-textarea::placeholder {
+        color: #4B5563;
+    }
+    
+    .form-textarea:focus {
+        outline: none;
+        border-color: #DC2626;
+    }
+    
+    /* Date Input Styling */
+    .form-input[type="date"] {
+        color-scheme: dark;
+    }
+    
+    .form-input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+    
+    /* Buttons */
+    .button-row {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #27272A;
+    }
+    
+    .btn-save {
+        flex: 1;
+        background-color: #DC2626;
+        color: #FFFFFF;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    
+    .btn-save:hover {
+        background-color: #991B1B;
+    }
+    
+    .btn-cancel {
+        flex: 1;
+        background-color: transparent;
+        color: #D1D5DB;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: 1px solid #27272A;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-cancel:hover {
+        border-color: #DC2626;
+        color: #FFFFFF;
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .edit-card {
+            padding: 1.5rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .avatar-section {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <div class="edit-card">
+        <h1 class="page-title" data-i18n="editProfile">Profili Düzenle</h1>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Avatar Upload -->
+            <div class="avatar-section">
+                <div class="avatar-preview">
+                    {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                    {% else %}
+                    {{ user.first_name|first|upper|default:user.username|first|upper }}
+                    {% endif %}
+                </div>
+                <div class="avatar-upload">
+                    <label class="upload-label" data-i18n="profilePicture">Profil Fotoğrafı</label>
+                    <input type="file" name="profile_picture" accept="image/*" class="file-input">
+                </div>
+            </div>
+            
+            <!-- Name Fields -->
+            <div class="form-grid">
+                <div>
+                    <label class="form-label" data-i18n="firstName">Ad</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" class="form-input" placeholder="Adınız" data-i18n-placeholder="firstNamePlaceholder">
+                </div>
+                <div>
+                    <label class="form-label" data-i18n="lastName">Soyad</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" class="form-input" placeholder="Soyadınız" data-i18n-placeholder="lastNamePlaceholder">
+                </div>
+            </div>
+            
+            <!-- Email -->
+            <div class="form-group">
+                <label class="form-label" data-i18n="email">E-posta</label>
+                <input type="email" name="email" value="{{ user.email }}" class="form-input" placeholder="ornek@email.com">
+            </div>
+            
+            <!-- Birth Date -->
+            <div class="form-group">
+                <label class="form-label" data-i18n="birthDate">Doğum Tarihi</label>
+                <input type="date" name="date_of_birth" value="{{ user.date_of_birth|date:'Y-m-d' }}" class="form-input">
+            </div>
+            
+            <!-- Bio -->
+            <div class="form-group">
+                <label class="form-label" data-i18n="aboutMe">Hakkımda</label>
+                <textarea name="bio" class="form-textarea" placeholder="Kendinizi tanıtın..." data-i18n-placeholder="aboutMePlaceholder">{{ user.bio|default:'' }}</textarea>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="button-row">
+                <button type="submit" class="btn-save" data-i18n="save">Kaydet</button>
+                <a href="{% url 'profile' %}" class="btn-cancel" data-i18n="cancel">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

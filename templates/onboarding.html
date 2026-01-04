@@ -1,0 +1,691 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoş Geldin! - MatchFlix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           ONBOARDING - CINEMATIC DARK THEME
+           No gradients, solid colors only
+        ======================================== */
+        
+        * { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        body {
+            background-color: #000000;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .onboarding-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: #000000;
+            border-bottom: 1px solid #27272A;
+        }
+        
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.5rem;
+            color: #DC2626;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .progress-indicators {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .step-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .step-dot {
+            width: 2rem;
+            height: 0.25rem;
+            background-color: #27272A;
+            transition: all 0.2s ease;
+        }
+        
+        .step-dot.active {
+            background-color: #DC2626;
+        }
+        
+        .step-text {
+            font-size: 0.75rem;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .skip-link {
+            font-size: 0.75rem;
+            color: #6B7280;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s ease;
+        }
+        
+        .skip-link:hover {
+            color: #FFFFFF;
+        }
+        
+        /* Main Content */
+        .onboarding-main {
+            padding-top: 6rem;
+            padding-bottom: 10rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        
+        /* Step Header */
+        .step-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 2.5rem;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-title span {
+            color: #DC2626;
+        }
+        
+        .step-subtitle {
+            font-size: 1rem;
+            color: #6B7280;
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+        
+        .step-subtitle strong {
+            color: #FFFFFF;
+        }
+        
+        /* Counter Bar */
+        .counter-bar {
+            position: sticky;
+            top: 4rem;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .counter-inner {
+            background-color: #0F0F0F;
+            border: 1px solid #27272A;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .counter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .counter-icon {
+            font-size: 1.25rem;
+        }
+        
+        .counter-value {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.25rem;
+            color: #FFFFFF;
+        }
+        
+        .counter-divider {
+            width: 1px;
+            height: 1.5rem;
+            background-color: #27272A;
+        }
+        
+        .counter-total {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.25rem;
+            color: #FFFFFF;
+        }
+        
+        .counter-total span {
+            color: #6B7280;
+            font-size: 1rem;
+        }
+        
+        /* Category Section */
+        .category-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .category-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.25rem;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .category-row {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scroll-behavior: smooth;
+        }
+        
+        .category-row::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .category-row::-webkit-scrollbar-track {
+            background: #0F0F0F;
+        }
+        
+        .category-row::-webkit-scrollbar-thumb {
+            background: #27272A;
+        }
+        
+        /* Movie Card */
+        .movie-card {
+            flex-shrink: 0;
+            width: 9rem;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background-color: #1A1A1A;
+            border: 2px solid #27272A;
+        }
+        
+        .movie-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        .movie-card.liked {
+            border-color: #22C55E;
+        }
+        
+        .movie-card.disliked {
+            border-color: #EF4444;
+            filter: grayscale(0.5);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .movie-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
+        }
+        
+        .movie-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .movie-year {
+            font-size: 0.625rem;
+            color: #6B7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .rating-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .rate-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .rate-btn.like {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #22C55E;
+        }
+        
+        .rate-btn.like:hover {
+            background-color: #22C55E;
+            color: #FFFFFF;
+        }
+        
+        .rate-btn.dislike {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+        
+        .rate-btn.dislike:hover {
+            background-color: #EF4444;
+            color: #FFFFFF;
+        }
+        
+        /* Selection Badge */
+        .selection-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 1.75rem;
+            height: 1.75rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+        
+        .selection-badge.liked {
+            display: flex;
+            background-color: #22C55E;
+        }
+        
+        .selection-badge.disliked {
+            display: flex;
+            background-color: #EF4444;
+        }
+        
+        /* Hint */
+        .hint-text {
+            text-align: center;
+            font-size: 1rem;
+            color: #9CA3AF;
+            font-weight: 500;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #0F0F0F;
+            border-left: 3px solid #FBBF24;
+        }
+        
+        /* Genre Chips */
+        .genre-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            max-width: 48rem;
+            margin: 0 auto;
+        }
+        
+        .genre-chip {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background-color: #1A1A1A;
+            border: 2px solid #27272A;
+            color: #D1D5DB;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .genre-chip:hover {
+            border-color: #DC2626;
+            color: #FFFFFF;
+        }
+        
+        .genre-chip.selected {
+            background-color: #DC2626;
+            border-color: #DC2626;
+            color: #FFFFFF;
+        }
+        
+        /* Footer */
+        .onboarding-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #000000;
+            border-top: 1px solid #27272A;
+            padding: 1.5rem;
+            z-index: 100;
+        }
+        
+        .footer-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .btn-back {
+            background-color: #1A1A1A;
+            color: #D1D5DB;
+            border: 1px solid #27272A;
+            padding: 0.875rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-back:hover {
+            border-color: #DC2626;
+            color: #FFFFFF;
+        }
+        
+        .btn-next {
+            background-color: #DC2626;
+            color: #FFFFFF;
+            padding: 1rem 2rem;
+            font-family: 'Anton', sans-serif;
+            font-size: 1.125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            background-color: #991B1B;
+        }
+        
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Header -->
+    <header class="onboarding-header">
+        <div class="header-inner">
+            <div class="logo">MatchFlix</div>
+            
+            <div class="progress-indicators">
+                <div class="step-dots">
+                    <div class="step-dot active" id="step1"></div>
+                    <div class="step-dot" id="step2"></div>
+                </div>
+                <span class="step-text" id="progress-text">Adım 1/2</span>
+            </div>
+            
+            <a href="{% url 'skip_onboarding' %}" class="skip-link">Atla →</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="onboarding-main">
+        
+        <!-- Step 1: Movie Selection -->
+        <section id="step1-content">
+            <div class="step-header">
+                <h2 class="step-title">
+                    Hoş Geldin, <span>{{ user.first_name|default:user.username }}</span>! 🎬
+                </h2>
+                <p class="step-subtitle">
+                    Sana en iyi önerileri sunabilmemiz için izlediğin filmleri değerlendir.
+                    <strong>En az 5 film</strong> seçmelisin.
+                </p>
+            </div>
+            
+            <!-- Counter Bar -->
+            <div class="counter-bar">
+                <div class="counter-inner">
+                    <div class="counter-item">
+                        <span class="counter-icon">👍</span>
+                        <span class="counter-value" id="liked-count">0</span>
+                    </div>
+                    <div class="counter-divider"></div>
+                    <div class="counter-item">
+                        <span class="counter-icon">👎</span>
+                        <span class="counter-value" id="disliked-count">0</span>
+                    </div>
+                    <div class="counter-divider"></div>
+                    <div class="counter-total">
+                        <span id="total-selected">0</span><span>/5</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Movie Categories -->
+            {% for category in movie_categories %}
+            <div class="category-section">
+                <h3 class="category-title">
+                    <span>{{ category.emoji }}</span>
+                    <span>{{ category.name }}</span>
+                </h3>
+                
+                <div class="category-row">
+                    {% for movie in category.movies %}
+                    <div class="movie-card" data-movie-id="{{ movie.id }}" data-rating="0">
+                        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster" loading="lazy">
+                        
+                        <!-- Overlay -->
+                        <div class="movie-overlay">
+                            <h3 class="movie-title">{{ movie.title }}</h3>
+                            <p class="movie-year">{{ movie.release_date.year|default:"" }}</p>
+                            
+                            <div class="rating-buttons">
+                                <button class="rate-btn like" onclick="event.stopPropagation(); rateMovie({{ movie.id }}, 8)">👍</button>
+                                <button class="rate-btn dislike" onclick="event.stopPropagation(); rateMovie({{ movie.id }}, 3)">👎</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Selection Badge -->
+                        <div class="selection-badge"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <p class="hint-text">💡 İpucu: İzlemediğin filmleri atla, sadece izlediklerini değerlendir!</p>
+        </section>
+        
+        <!-- Step 2: Genre Selection -->
+        <section id="step2-content" class="hidden">
+            <div class="step-header">
+                <h2 class="step-title">Favori Türlerini Seç 🎭</h2>
+                <p class="step-subtitle">
+                    Hangi tür filmleri seviyorsun? İstediğin kadar seçebilirsin.
+                </p>
+            </div>
+            
+            <div class="genre-grid">
+                {% for genre in genres %}
+                <button class="genre-chip" data-genre-id="{{ genre.id }}" onclick="toggleGenre(this, {{ genre.id }})">
+                    {{ genre.name_tr|default:genre.name }}
+                </button>
+                {% endfor %}
+            </div>
+            
+            <p class="hint-text">💡 İpucu: Bu adımı atlayabilirsin, puanladığın filmlerden zaten tür tercihini anlayacağız!</p>
+        </section>
+        
+    </main>
+    
+    <!-- Footer -->
+    <footer class="onboarding-footer">
+        <div class="footer-inner">
+            <button id="back-btn" class="btn-back hidden" onclick="goToStep(1)">← Geri</button>
+            <div></div>
+            
+            <button id="next-btn" class="btn-next" onclick="nextStep()" disabled>Devam Et →</button>
+            <button id="finish-btn" class="btn-next hidden" onclick="finishOnboarding()">🎉 Keşfetmeye Başla</button>
+        </div>
+    </footer>
+    
+    <script>
+        var currentStep = 1;
+        var ratings = {};
+        var selectedGenres = new Set();
+        
+        function rateMovie(movieId, score) {
+            var card = document.querySelector('[data-movie-id="' + movieId + '"]');
+            var badge = card.querySelector('.selection-badge');
+            
+            if (ratings[movieId] === score) {
+                delete ratings[movieId];
+                card.classList.remove('liked', 'disliked');
+                badge.className = 'selection-badge';
+            } else {
+                ratings[movieId] = score;
+                card.classList.remove('liked', 'disliked');
+                
+                if (score >= 6) {
+                    card.classList.add('liked');
+                    badge.textContent = '👍';
+                    badge.className = 'selection-badge liked';
+                } else {
+                    card.classList.add('disliked');
+                    badge.textContent = '👎';
+                    badge.className = 'selection-badge disliked';
+                }
+            }
+            
+            updateCounts();
+        }
+        
+        function updateCounts() {
+            var likedCount = Object.values(ratings).filter(function(r) { return r >= 6; }).length;
+            var dislikedCount = Object.values(ratings).filter(function(r) { return r < 6; }).length;
+            var total = Object.keys(ratings).length;
+            
+            document.getElementById('liked-count').textContent = likedCount;
+            document.getElementById('disliked-count').textContent = dislikedCount;
+            document.getElementById('total-selected').textContent = total;
+            
+            var nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = total < 5;
+        }
+        
+        function toggleGenre(btn, genreId) {
+            if (selectedGenres.has(genreId)) {
+                selectedGenres.delete(genreId);
+                btn.classList.remove('selected');
+            } else {
+                selectedGenres.add(genreId);
+                btn.classList.add('selected');
+            }
+        }
+        
+        function goToStep(step) {
+            currentStep = step;
+            
+            document.getElementById('step1').classList.toggle('active', step >= 1);
+            document.getElementById('step2').classList.toggle('active', step >= 2);
+            document.getElementById('progress-text').textContent = 'Adım ' + step + '/2';
+            
+            document.getElementById('step1-content').classList.toggle('hidden', step !== 1);
+            document.getElementById('step2-content').classList.toggle('hidden', step !== 2);
+            
+            document.getElementById('back-btn').classList.toggle('hidden', step === 1);
+            document.getElementById('next-btn').classList.toggle('hidden', step === 2);
+            document.getElementById('finish-btn').classList.toggle('hidden', step !== 2);
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function nextStep() {
+            if (currentStep === 1 && Object.keys(ratings).length >= 5) {
+                goToStep(2);
+            }
+        }
+        
+        async function finishOnboarding() {
+            var btn = document.getElementById('finish-btn');
+            btn.disabled = true;
+            btn.textContent = 'Kaydediliyor...';
+            
+            try {
+                var response = await fetch('/onboarding/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        ratings: Object.entries(ratings).map(function([movieId, score]) {
+                            return { movie_id: parseInt(movieId), score: score };
+                        }),
+                        genres: Array.from(selectedGenres)
+                    })
+                });
+                
+                var data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    btn.disabled = false;
+                    btn.textContent = '🎉 Keşfetmeye Başla';
+                }
+            } catch (error) {
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                btn.disabled = false;
+                btn.textContent = '🎉 Keşfetmeye Başla';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Giriş Yap - MatchFlix{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* ========================================
+       LOGIN PAGE - CINEMATIC DARK THEME
+       No gradients, solid colors only
+    ======================================== */
+    
+    body {
+        background-color: #000000 !important;
+    }
+    
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+    }
+    
+    .login-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        width: 100%;
+        max-width: 420px;
+        padding: 3rem;
+    }
+    
+    /* Logo */
+    .login-logo {
+        font-family: 'Anton', sans-serif;
+        font-size: 2rem;
+        color: #DC2626;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    /* Title */
+    .login-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.75rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.5rem;
+    }
+    
+    .login-subtitle {
+        font-size: 0.875rem;
+        color: #6B7280;
+        margin-bottom: 2rem;
+    }
+    
+    /* Error Box */
+    .error-box {
+        background-color: #1A1A1A;
+        border-left: 4px solid #EF4444;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        color: #F87171;
+        font-size: 0.875rem;
+    }
+    
+    /* Google Button */
+    .google-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        background-color: #FFFFFF;
+        color: #1A1A1A;
+        font-weight: 600;
+        padding: 0.875rem 1rem;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+        margin-bottom: 1.5rem;
+    }
+    
+    .google-btn:hover {
+        background-color: #F3F4F6;
+    }
+    
+    .google-btn svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+    
+    /* Divider */
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .divider-line {
+        flex: 1;
+        height: 1px;
+        background-color: #27272A;
+    }
+    
+    .divider-text {
+        font-size: 0.75rem;
+        color: #4B5563;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+    
+    /* Form */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+    
+    .forgot-link {
+        font-size: 0.75rem;
+        color: #DC2626;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+    }
+    
+    .forgot-link:hover {
+        opacity: 0.8;
+    }
+    
+    .form-input {
+        width: 100%;
+        background-color: #000000;
+        border: 1px solid #27272A;
+        color: #FFFFFF;
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-input::placeholder {
+        color: #4B5563;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #DC2626;
+    }
+    
+    /* Submit Button */
+    .submit-btn {
+        width: 100%;
+        background-color: #DC2626;
+        color: #FFFFFF;
+        padding: 0.875rem 1.5rem;
+        font-family: 'Anton', sans-serif;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 0.5rem;
+    }
+    
+    .submit-btn:hover {
+        background-color: #991B1B;
+    }
+    
+    /* Register Link */
+    .register-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #27272A;
+    }
+    
+    .register-link p {
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+    
+    .register-link a {
+        color: #DC2626;
+        font-weight: 600;
+        text-decoration: none;
+        transition: opacity 0.2s ease;
+    }
+    
+    .register-link a:hover {
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-card">
+        <!-- Logo -->
+        <div class="login-logo">MatchFlix</div>
+        
+        <!-- Title -->
+        <h1 class="login-title" data-i18n="login">Giriş Yap</h1>
+        <p class="login-subtitle" data-i18n="loginDesc">MatchFlix hesabına giriş yap</p>
+        
+        {% if error %}
+        <div class="error-box">{{ error }}</div>
+        {% endif %}
+        
+        <!-- Google Login -->
+        <a href="{% url 'google_login' %}" class="google-btn">
+            <svg viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span data-i18n="continueWithGoogle">Google ile Devam Et</span>
+        </a>
+        
+        <!-- Divider -->
+        <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text" data-i18n="or">veya</span>
+            <div class="divider-line"></div>
+        </div>
+        
+        <!-- Login Form -->
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label" data-i18n="username">Kullanıcı Adı</label>
+                <input type="text" name="username" required class="form-input" placeholder="Kullanıcı adınız">
+            </div>
+            
+            <div class="form-group">
+                <div class="form-label-row">
+                    <label class="form-label" style="margin-bottom: 0;" data-i18n="password">Şifre</label>
+                    <a href="{% url 'forgot_password' %}" class="forgot-link" data-i18n="forgotPassword">Şifremi Unuttum</a>
+                </div>
+                <input type="password" name="password" required class="form-input" placeholder="••••••••">
+            </div>
+            
+            <button type="submit" class="submit-btn" data-i18n="login">Giriş Yap</button>
+        </form>
+        
+        <!-- Register Link -->
+        <div class="register-link">
+            <p>
+                <span data-i18n="noAccount">Hesabın yok mu?</span>
+                <a href="{% url 'register' %}" data-i18n="register">Kaydol</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

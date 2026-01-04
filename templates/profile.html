@@ -1,0 +1,782 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil - MatchFlix{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* ========================================
+       PROFILE PAGE - CINEMATIC DARK THEME
+       No gradients, solid colors only
+    ======================================== */
+    
+    body {
+        background-color: #000000 !important;
+    }
+    
+    .profile-container {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+    }
+    
+    /* Profile Header Card */
+    .profile-header {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .profile-top {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+        .profile-top {
+            flex-direction: row;
+        }
+    }
+    
+    .profile-avatar {
+        width: 8rem;
+        height: 8rem;
+        background-color: #DC2626;
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-info {
+        flex: 1;
+    }
+    
+    .profile-name {
+        font-family: 'Anton', sans-serif;
+        font-size: 2.5rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.25rem;
+    }
+    
+    .profile-username {
+        font-size: 1rem;
+        color: #6B7280;
+        margin-bottom: 1rem;
+    }
+    
+    .profile-bio {
+        font-size: 1rem;
+        color: #D1D5DB;
+        margin-bottom: 1.5rem;
+        max-width: 32rem;
+    }
+    
+    .profile-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-profile {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-profile-primary {
+        background-color: #DC2626;
+        color: #FFFFFF;
+        border: none;
+    }
+    
+    .btn-profile-primary:hover {
+        background-color: #991B1B;
+    }
+    
+    .btn-profile-secondary {
+        background-color: transparent;
+        color: #D1D5DB;
+        border: 1px solid #27272A;
+    }
+    
+    .btn-profile-secondary:hover {
+        border-color: #DC2626;
+        color: #FFFFFF;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.75rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    .stat-card {
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        padding: 1rem;
+        text-align: center;
+        transition: border-color 0.2s ease;
+    }
+    
+    .stat-card:hover {
+        border-color: #DC2626;
+    }
+    
+    .stat-value {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.75rem;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-value.red { color: #DC2626; }
+    .stat-value.green { color: #22C55E; }
+    .stat-value.gold { color: #FBBF24; }
+    .stat-value.blue { color: #3B82F6; }
+    .stat-value.purple { color: #A855F7; }
+    .stat-value.pink { color: #EC4899; }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    /* Section Card */
+    .section-card {
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .section-icon {
+        font-size: 1.25rem;
+    }
+    
+    .section-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.25rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+    
+    /* Chart Container */
+    .chart-container {
+        height: 16rem;
+    }
+    
+    .chart-container-small {
+        height: 12rem;
+    }
+    
+    /* Two Column Grid */
+    .two-col-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .two-col-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* List Item */
+    .list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        background-color: #1A1A1A;
+        border: 1px solid #27272A;
+        margin-bottom: 0.5rem;
+    }
+    
+    .list-item-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #FFFFFF;
+    }
+    
+    .list-item-count {
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+    
+    .no-data {
+        color: #4B5563;
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Top Rated Movies Grid */
+    .top-movies-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.75rem;
+    }
+    
+    @media (max-width: 1024px) {
+        .top-movies-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .top-movies-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    .top-movie-card {
+        position: relative;
+        display: block;
+        text-decoration: none;
+        transition: transform 0.2s ease;
+    }
+    
+    .top-movie-card:hover {
+        transform: translateY(-4px);
+    }
+    
+    .top-movie-poster {
+        width: 100%;
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        background-color: #1A1A1A;
+    }
+    
+    .top-movie-score {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: #FBBF24;
+        color: #000000;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .top-movie-title {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #FFFFFF;
+        margin-top: 0.5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    /* Settings Section */
+    .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .setting-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+    }
+    
+    .toggle-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .toggle-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid #27272A;
+        background-color: #1A1A1A;
+        color: #6B7280;
+    }
+    
+    .toggle-btn:hover {
+        border-color: #3B82F6;
+        color: #FFFFFF;
+    }
+    
+    .toggle-btn.active {
+        background-color: #3B82F6;
+        border-color: #3B82F6;
+        color: #FFFFFF;
+    }
+    
+    /* Recent Ratings */
+    .ratings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .rating-card {
+        display: flex;
+        gap: 1rem;
+        background-color: #0F0F0F;
+        border: 1px solid #27272A;
+        padding: 1rem;
+        text-decoration: none;
+        transition: border-color 0.2s ease;
+    }
+    
+    .rating-card:hover {
+        border-color: #DC2626;
+    }
+    
+    .rating-poster {
+        width: 5rem;
+        height: 7rem;
+        object-fit: cover;
+        background-color: #1A1A1A;
+        flex-shrink: 0;
+    }
+    
+    .rating-content {
+        flex: 1;
+    }
+    
+    .rating-movie-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        margin-bottom: 0.5rem;
+    }
+    
+    .rating-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .rating-score {
+        font-family: 'Anton', sans-serif;
+        color: #FBBF24;
+    }
+    
+    .rating-date {
+        color: #4B5563;
+        font-size: 0.875rem;
+    }
+    
+    .rating-review {
+        font-size: 0.875rem;
+        color: #D1D5DB;
+        line-height: 1.5;
+    }
+    
+    .no-ratings {
+        color: #6B7280;
+        text-align: center;
+        padding: 3rem;
+    }
+    
+    /* Recent Ratings Title */
+    .recent-title {
+        font-family: 'Anton', sans-serif;
+        font-size: 1.5rem;
+        color: #FFFFFF;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin-bottom: 1.5rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .recent-title::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background-color: #DC2626;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-top">
+            <div class="profile-avatar">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}">
+                {% else %}
+                {{ user.first_name|first|upper|default:user.username|first|upper }}
+                {% endif %}
+            </div>
+            
+            <div class="profile-info">
+                <h1 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h1>
+                <p class="profile-username">@{{ user.username }}</p>
+                
+                {% if user.bio %}
+                <p class="profile-bio">{{ user.bio }}</p>
+                {% endif %}
+                
+                <div class="profile-actions">
+                    <a href="{% url 'edit_profile' %}" class="btn-profile btn-profile-primary" data-i18n="editProfile">Profili Düzenle</a>
+                    <a href="{% url 'watched_movies' %}" class="btn-profile btn-profile-secondary">İzlediklerim</a>
+                    <a href="{% url 'watchlist' %}" class="btn-profile btn-profile-secondary">İzleyeceklerim</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-value red">{{ watched_count }}</p>
+                <p class="stat-label">İzlenen</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value green">{{ liked_count }}</p>
+                <p class="stat-label">Beğenilen</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value gold">{{ avg_rating }}/10</p>
+                <p class="stat-label">Ort. Puan</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value blue">{{ watchlist_count }}</p>
+                <p class="stat-label">İzlenecek</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value purple">{{ watch_hours }}<span style="font-size: 1rem;">s</span></p>
+                <p class="stat-label">Toplam Süre</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-value pink">{{ friends_count }}</p>
+                <p class="stat-label">Arkadaş</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Row -->
+    <div class="two-col-grid">
+        <!-- Genre Distribution -->
+        <div class="section-card">
+            <div class="section-header">
+                <span class="section-icon">🎬</span>
+                <h2 class="section-title">Tür Dağılımı</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="genreChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Rating Distribution -->
+        <div class="section-card">
+            <div class="section-header">
+                <span class="section-icon">⭐</span>
+                <h2 class="section-title">Puan Dağılımı</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="ratingChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Monthly Activity -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-icon">📈</span>
+            <h2 class="section-title">Aylık İzleme Aktivitesi</h2>
+        </div>
+        <div class="chart-container-small">
+            <canvas id="activityChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Directors & Actors -->
+    <div class="two-col-grid">
+        <!-- Favorite Directors -->
+        <div class="section-card">
+            <div class="section-header">
+                <span class="section-icon">🎥</span>
+                <h2 class="section-title">Favori Yönetmenler</h2>
+            </div>
+            {% if top_directors %}
+            <div>
+                {% for director, count in top_directors %}
+                <div class="list-item">
+                    <span class="list-item-name">{{ director }}</span>
+                    <span class="list-item-count">{{ count }} film</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-data">Henüz yeterli veri yok</p>
+            {% endif %}
+        </div>
+        
+        <!-- Favorite Actors -->
+        <div class="section-card">
+            <div class="section-header">
+                <span class="section-icon">🌟</span>
+                <h2 class="section-title">Favori Oyuncular</h2>
+            </div>
+            {% if top_actors %}
+            <div>
+                {% for actor, count in top_actors %}
+                <div class="list-item">
+                    <span class="list-item-name">{{ actor }}</span>
+                    <span class="list-item-count">{{ count }} film</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-data">Henüz yeterli veri yok</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Top Rated Movies -->
+    {% if top_rated_by_user %}
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-icon">🏆</span>
+            <h2 class="section-title">En Yüksek Puanladıklarım</h2>
+        </div>
+        <div class="top-movies-grid">
+            {% for rating in top_rated_by_user %}
+            <a href="{% url 'movie_detail' rating.movie.id %}" class="top-movie-card">
+                <img src="{{ rating.movie.poster_url }}" alt="{{ rating.movie.title }}" class="top-movie-poster">
+                <div class="top-movie-score">★ {{ rating.score }}</div>
+                <p class="top-movie-title">{{ rating.movie.title }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Settings -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-icon">⚙️</span>
+            <h2 class="section-title" data-i18n="settings">Ayarlar</h2>
+        </div>
+        <div class="settings-grid">
+            <!-- Language Setting -->
+            <div>
+                <label class="setting-label" data-i18n="language">Dil</label>
+                <div class="toggle-group">
+                    <button id="langTrBtn" class="toggle-btn active" onclick="setLang('tr');">
+                        🇹🇷 Türkçe
+                    </button>
+                    <button id="langEnBtn" class="toggle-btn" onclick="setLang('en');">
+                        🇬🇧 English
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Ratings -->
+    <div style="margin-top: 2rem;">
+        <h2 class="recent-title" data-i18n="recentRatings">Son Puanladığı Filmler</h2>
+        
+        <div class="ratings-list">
+            {% for rating in ratings %}
+            <a href="{% url 'movie_detail' rating.movie.id %}" class="rating-card">
+                <img src="{{ rating.movie.poster_url }}" alt="{{ rating.movie.title }}" class="rating-poster">
+                <div class="rating-content">
+                    <h3 class="rating-movie-title">{{ rating.movie.title }}</h3>
+                    <div class="rating-meta">
+                        <span class="rating-score">★ {{ rating.score }}/10</span>
+                        <span class="rating-date">{{ rating.created_at|date:"d M Y" }}</span>
+                    </div>
+                    {% if rating.review %}
+                    <p class="rating-review">{{ rating.review|truncatewords:30 }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <p class="no-ratings" data-i18n="noRatings">Henüz film puanlamadın.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    updateSettingsUI();
+
+    // Chart.js default settings - Cinematic Theme
+    Chart.defaults.color = '#6B7280';
+    Chart.defaults.borderColor = '#27272A';
+
+    // Genre Distribution (Doughnut Chart)
+    var genreLabels = {{ genre_labels|safe }};
+    var genreValues = {{ genre_values|safe }};
+
+    if (genreLabels.length > 0) {
+        new Chart(document.getElementById('genreChart'), {
+            type: 'doughnut',
+            data: {
+                labels: genreLabels,
+                datasets: [{
+                    data: genreValues,
+                    backgroundColor: [
+                        '#DC2626', '#FBBF24', '#22C55E', '#3B82F6',
+                        '#A855F7', '#EC4899', '#F97316', '#14B8A6'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 8,
+                            font: { size: 11 }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Rating Distribution (Bar Chart)
+    var ratingDistribution = {{ rating_distribution|safe }};
+
+    new Chart(document.getElementById('ratingChart'), {
+        type: 'bar',
+        data: {
+            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            datasets: [{
+                label: 'Film Sayısı',
+                data: ratingDistribution,
+                backgroundColor: '#DC2626',
+                borderRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#27272A' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+
+    // Monthly Activity (Line Chart)
+    var monthsLabels = {{ months_labels|safe }};
+    var monthsValues = {{ months_values|safe }};
+
+    new Chart(document.getElementById('activityChart'), {
+        type: 'line',
+        data: {
+            labels: monthsLabels,
+            datasets: [{
+                label: 'İzlenen Film',
+                data: monthsValues,
+                borderColor: '#DC2626',
+                backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                fill: true,
+                tension: 0,
+                pointBackgroundColor: '#DC2626',
+                pointBorderColor: '#000000',
+                pointRadius: 4,
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 },
+                    grid: { color: '#27272A' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
