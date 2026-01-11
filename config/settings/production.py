@@ -1,13 +1,20 @@
 from .base import *
+import os
 
 DEBUG = False
 
-# WhiteNoise - Static files
+# WhiteNoise - Static files (must be after SecurityMiddleware)
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
-# Security
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+# Security - Azure App Service handles SSL at the load balancer level
+# So we disable SECURE_SSL_REDIRECT when behind Azure's reverse proxy
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
@@ -16,6 +23,12 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
+# CSRF Trusted Origins for Azure
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.azurewebsites.net',
+    config('SITE_URL', default='https://matchflix-app.azurewebsites.net'),
+]
 
 # Azure Blob Storage (optional - for ML model and media)
 AZURE_STORAGE_CONNECTION_STRING = config('AZURE_STORAGE_CONNECTION_STRING', default='')
